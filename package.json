@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node backend/server.js",
     "dev": "concurrently \"nodemon backend/server.js\" \"npm start --prefix frontend\"",
+    "client": "npm start --prefix frontend",
     "debug": "concurrently \"nodemon --inspect backend/server.js\" \"npm run debug --prefix frontend\""
   },
   "keywords": [],
