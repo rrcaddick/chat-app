@@ -1,14 +1,36 @@
-const { RouteHandler } = require("express");
+const path = require("path");
+const fs = require("fs/promises");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
 
 const registerUser = asyncHandler(async (req, res, next) => {
   const {
+    file: { path: tempImagePath },
     body: { name, email, password },
   } = req;
 
-  const user = await User.create({ name, email, password });
+  const targetPath = path.join(
+    __dirname,
+    "..",
+    "assets",
+    "images",
+    "profile-pictures",
+    `${path.basename(tempImagePath)}`
+  );
+
+  if (tempImagePath) {
+    try {
+      await fs.rename(tempImagePath, targetPath);
+    } catch (error) {
+      await fs.unlink(tempImagePath);
+      res.status(401);
+      throw new Error("Unable to save profile picture");
+    }
+  }
+  const profilePicture = tempImagePath ? `/profile-pictures/${path.basename(tempImagePath)}` : undefined;
+
+  const user = await User.create({ name, email, password, profilePicture });
 
   res.status(201).json({
     name: user.name,

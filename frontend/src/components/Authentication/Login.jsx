@@ -1,3 +1,4 @@
+/* eslint-disable no-control-regex */
 import { useState } from "react";
 import {
   FormControl,
@@ -21,12 +22,11 @@ const SignupForm = styled.form`
   gap: 1rem;
 `;
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
-    getValues,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -49,7 +49,7 @@ const Login = () => {
   };
 
   const submitHandler = (userData) => {
-    console.log(userData);
+    onLogin(userData);
   };
 
   return (

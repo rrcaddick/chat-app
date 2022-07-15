@@ -1,3 +1,4 @@
+/* eslint-disable no-control-regex */
 import { useState, forwardRef } from "react";
 import {
   FormControl,
@@ -9,6 +10,7 @@ import {
   Text,
   HStack,
   InputRightElement,
+  Spinner,
 } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/icons";
 import { FaRegEyeSlash, FaRegEye, FaPhotoVideo } from "react-icons/fa";
@@ -37,21 +39,22 @@ const UploadInput = forwardRef((props, ref) => {
   return <Input type="file" {...props} ref={ref} />;
 });
 
-const Signup = () => {
-  const [fileName, setFileName] = useState(null);
+const Signup = ({ onSignup, isLoading }) => {
   const [showPassword, setShowPassword] = useState({ password: false, confirmPassword: false });
 
   const {
     register,
     getValues,
+    setValue,
     handleSubmit,
+    trigger,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      name: "Ray Caddick",
+      email: "rrcaddick@gmail.com",
+      password: "Whatever123!",
+      confirmPassword: "Whatever123!",
       profilePicture: null,
     },
     mode: "all",
@@ -59,7 +62,8 @@ const Signup = () => {
 
   const onFileChange = (e) => {
     const file = e.target.files[0];
-    setFileName(file.name);
+    setValue("profilePicture", file);
+    trigger("profilePicture");
   };
 
   const nameValidator = {
@@ -104,7 +108,7 @@ const Signup = () => {
   };
 
   const submitHandler = (userData) => {
-    console.log(userData);
+    onSignup(userData);
   };
 
   return (
@@ -170,13 +174,13 @@ const Signup = () => {
         <HStack>
           <Button colorScheme="green" display="flex" position="relative" borderRadius="50%">
             <Icon as={FaPhotoVideo} />
-            <UploadInput id="profilePicture" {...register("profilePicture")} onChange={onFileChange} />
+            <UploadInput id="profilePicture" onChange={onFileChange} />
           </Button>
-          <Text>{fileName}</Text>
+          <Text>{getValues("profilePicture")?.name}</Text>
         </HStack>
       </FormControl>
-      <Button type="submit" colorScheme="blue">
-        Sign Up
+      <Button type="submit" colorScheme="blue" disabled={isLoading} display="flex" justify="center" align="center">
+        {isLoading ? <Spinner /> : "Sign Up"}
       </Button>
     </SignupForm>
   );
