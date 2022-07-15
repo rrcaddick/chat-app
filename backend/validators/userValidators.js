@@ -34,10 +34,7 @@ const validateLogin = [
     const { email, password } = body;
 
     const user = await User.findOne({ email });
-    if (!user) throw new Error("Invalid email");
-
-    const passwordIsValid = await bcrypt.compare(password, user.password);
-    if (!passwordIsValid) throw new Error("Invalid password");
+    if (!user || !(await user.validatePassword(password))) throw new Error("Invalid email or password");
 
     req.user = user;
     return true;

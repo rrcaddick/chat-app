@@ -15,6 +15,9 @@ app.use(cookieParser());
 app.use("/api/chats", require("./routes/chat.routes"));
 app.use("/api/auth", require("./routes/auth.routes"));
 
+// Not found
+app.use(require("./middleware/notFound"));
+
 // Error handler
 app.use(require("./middleware/errorMiddleware"));
 
