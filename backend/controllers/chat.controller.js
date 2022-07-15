@@ -1,6 +1,6 @@
 const { RouteHandler } = require("express");
 const asyncHandler = require("express-async-handler");
-const Chat = require("../models/chat");
+const Chat = require("../models/chat.model");
 
 const getChats = asyncHandler(async (req, res, next) => {
   const chats = await Chat.find();

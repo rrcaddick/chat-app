@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt");
 const { body } = require("express-validator");
-const User = require("../models/user");
+const User = require("../models/user.model");
 
 const validateRegistation = [
   body("name", "Name should not contain numbers or special characters. (Sorry Elon)")
