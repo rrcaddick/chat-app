@@ -40,6 +40,11 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.statics.revokeToken = async function (userId) {
+  const user = await this.findById(userId);
+  await user.clearRefreshToken();
+};
+
 userSchema.methods.validatePassword = async function (inputPassword) {
   return await bcrypt.compare(inputPassword, this.password);
 };
