@@ -16,7 +16,7 @@ const initialState = {
     login: false,
     register: false,
   },
-  errors: {},
+  validationErrors: null,
   message: "",
 };
 
@@ -25,7 +25,7 @@ export const registerUser = createAsyncThunk("auth/registerUser", async (userDat
     return await authAdapter.registerUser(userData);
   } catch (error) {
     const data = error?.response?.data;
-    thunkAPI.rejectWithValue(data);
+    return thunkAPI.rejectWithValue(data);
   }
 });
 
@@ -34,7 +34,7 @@ export const loginUser = createAsyncThunk("auth/loginUser", async (userData, thu
     return await tokenRequest.loginUser(userData);
   } catch (error) {
     const data = error?.response?.data;
-    thunkAPI.rejectWithValue(data);
+    return thunkAPI.rejectWithValue(data);
   }
 });
 
@@ -43,7 +43,7 @@ export const logoutUser = createAsyncThunk("auth/logoutUser", async (_, thunkAPI
     return await tokenRequest.logoutUser();
   } catch (error) {
     const data = error?.response?.data;
-    thunkAPI.rejectWithValue(data);
+    return thunkAPI.rejectWithValue(data);
   }
 });
 
@@ -64,7 +64,7 @@ const authSlice = createSlice({
           login: false,
           register: false,
         },
-        errors: {},
+        validationErrors: null,
         message: "",
       };
     },
@@ -81,6 +81,7 @@ const authSlice = createSlice({
       .addCase(registerUser.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isError = true;
+        state.validationErrors = payload?.validationErrors || null;
       })
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
@@ -111,7 +112,7 @@ const authSlice = createSlice({
           login: false,
           register: false,
         };
-        state.errors = {};
+        state.validationErrors = null;
         state.message = "";
       })
       .addCase(logoutUser.rejected, (state, { payload }) => {

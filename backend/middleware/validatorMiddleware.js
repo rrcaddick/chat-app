@@ -22,7 +22,7 @@ const validateInputs = (validationArray) => {
     const isLogin = req.url === "/login";
     const message = isLogin ? "Invalid email or password" : "Validation failed";
 
-    if (!isLogin) res.validationErrors = validationErrors;
+    if (!isLogin) req.validationErrors = validationErrors;
     res.status(isLogin ? 401 : 422);
     throw new Error(message);
   });

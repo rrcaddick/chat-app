@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Container, Box, Text, Tabs, TabList, Tab, TabPanel, TabPanels } from "@chakra-ui/react";
+import { Container, Box, Text, Tabs, TabList, Tab, TabPanel, TabPanels, useToast } from "@chakra-ui/react";
 import Login from "../components/Authentication/Login";
 import Signup from "../components/Authentication/Signup";
 import { registerUser, loginUser, reset } from "../features/authSlice";
@@ -12,8 +12,10 @@ const Home = () => {
     isLoading,
     isSuccess: { register: isSuccessRegister, login: isSuccessLogin },
     isError,
+    validationErrors,
     message,
   } = useSelector((state) => state.auth);
+  const toast = useToast();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -27,6 +29,13 @@ const Home = () => {
 
   useEffect(() => {
     if (isSuccessRegister) {
+      toast({
+        title: "Registration Successful",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
       setTabIndex(0);
     }
     if (isSuccessLogin) {
@@ -34,7 +43,7 @@ const Home = () => {
     }
 
     dispatch(reset());
-  }, [isSuccessRegister, isSuccessLogin, navigate]);
+  }, [isSuccessRegister, isSuccessLogin, navigate, dispatch, toast]);
 
   return (
     <Container maxW="xl" centerContent>
@@ -70,7 +79,7 @@ const Home = () => {
               <Login onLogin={loginHandler} isLoading={isLoading} />
             </TabPanel>
             <TabPanel>
-              <Signup onSignup={signupHandler} isLoading={isLoading} />
+              <Signup onSignup={signupHandler} isLoading={isLoading} errors={{ isError, validationErrors, message }} />
             </TabPanel>
           </TabPanels>
         </Tabs>

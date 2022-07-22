@@ -1,4 +1,5 @@
 import axios from "axios";
+import { logoutUser } from "../../features/authSlice";
 
 const tokenRequest = axios.create();
 
@@ -6,16 +7,20 @@ export const initAxiosInterceptors = async (store) => {
   let token;
 
   tokenRequest.loginUser = async (userData) => {
-    const response = await axios.post(`/api/auth/login`, userData);
-    token = response.data.token;
-    const user = {
-      name: response.data.name,
-      email: response.data.email,
-      profilePicture: response.data.profilePicture,
-    };
+    try {
+      const response = await axios.post(`/api/auth/login`, userData);
+      token = response.data.token;
+      const user = {
+        name: response.data.name,
+        email: response.data.email,
+        profilePicture: response.data.profilePicture,
+      };
 
-    localStorage.setItem("user", JSON.stringify(user));
-    return user;
+      localStorage.setItem("user", JSON.stringify(user));
+      return user;
+    } catch (error) {
+      Promise.reject(error);
+    }
   };
 
   const refreshToken = async () => {
@@ -56,8 +61,7 @@ export const initAxiosInterceptors = async (store) => {
       }
 
       if (error.response.status === 403) {
-        await tokenRequest.logoutUser();
-        // Logout here
+        store.dispatch(logoutUser());
       }
 
       return Promise.reject(error);

@@ -4,7 +4,7 @@ const errorHandler = async (error, req, res, next) => {
 
   res.status(statusCode).json({
     message: error.message,
-    validationErrors: res?.validationErrors || undefined,
+    validationErrors: req?.validationErrors || undefined,
     stack: development ? error.stack : undefined,
   });
 };

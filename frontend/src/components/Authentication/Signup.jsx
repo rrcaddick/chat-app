@@ -40,7 +40,7 @@ const UploadInput = forwardRef((props, ref) => {
   return <Input type="file" {...props} ref={ref} />;
 });
 
-const Signup = ({ onSignup, isLoading }) => {
+const Signup = ({ onSignup, isLoading, errors: { isError, validationErrors, message } }) => {
   const [showPassword, setShowPassword] = useState({ password: false, confirmPassword: false });
 
   const {
@@ -124,17 +124,21 @@ const Signup = ({ onSignup, isLoading }) => {
 
   return (
     <SignupForm noValidate onSubmit={handleSubmit(submitHandler)}>
-      <FormControl isInvalid={Boolean(errors?.name)} isRequired>
+      <FormControl isInvalid={Boolean(errors?.name || validationErrors?.name)} isRequired>
         <Input variant="flushed" px={3} id="name" type="text" placeholder="Full Name" {...nameValidator} />
-        {errors?.name && <FormErrorMessage>{errors.name.message}</FormErrorMessage>}
+        {(errors?.name || validationErrors?.name) && (
+          <FormErrorMessage>{errors?.name?.message || validationErrors?.name}</FormErrorMessage>
+        )}
       </FormControl>
 
-      <FormControl isInvalid={Boolean(errors?.email)} isRequired>
+      <FormControl isInvalid={Boolean(errors?.email || validationErrors?.email)} isRequired>
         <Input variant="flushed" px={3} id="email" type="email" placeholder="Email Address" {...emailValidator} />
-        {errors?.email && <FormErrorMessage>{errors.email.message}</FormErrorMessage>}
+        {(errors?.email || validationErrors?.email) && (
+          <FormErrorMessage>{errors?.email?.message || validationErrors?.email}</FormErrorMessage>
+        )}
       </FormControl>
 
-      <FormControl isInvalid={Boolean(errors?.password)} isRequired>
+      <FormControl isInvalid={Boolean(errors?.password || validationErrors?.password)} isRequired>
         <InputGroup>
           <Input
             variant="flushed"
@@ -154,10 +158,12 @@ const Signup = ({ onSignup, isLoading }) => {
             />
           </InputRightElement>
         </InputGroup>
-        {errors?.password && <FormErrorMessage>{errors.password.message}</FormErrorMessage>}
+        {(errors?.password || validationErrors?.password) && (
+          <FormErrorMessage>{errors?.password?.message || validationErrors?.password}</FormErrorMessage>
+        )}
       </FormControl>
 
-      <FormControl isInvalid={Boolean(errors?.confirmPassword)} isRequired>
+      <FormControl isInvalid={Boolean(errors?.confirmPassword || validationErrors?.confirmPassword)} isRequired>
         <InputGroup>
           <Input
             variant="flushed"
@@ -177,10 +183,12 @@ const Signup = ({ onSignup, isLoading }) => {
             />
           </InputRightElement>
         </InputGroup>
-        {errors?.confirmPassword && <FormErrorMessage>{errors.confirmPassword.message}</FormErrorMessage>}
+        {(errors?.confirmPassword || validationErrors?.confirmPassword) && (
+          <FormErrorMessage>{errors?.confirmPassword?.message || validationErrors?.confirmPassword}</FormErrorMessage>
+        )}
       </FormControl>
 
-      <FormControl isInvalid={Boolean(errors?.profilePicture)} my={5}>
+      <FormControl isInvalid={Boolean(errors?.profilePicture || validationErrors?.profilePicture)} my={5}>
         <FormLabel>Choose your profile picture:</FormLabel>
         <HStack>
           <Button colorScheme="green" display="flex" position="relative" borderRadius="50%">
@@ -197,7 +205,9 @@ const Signup = ({ onSignup, isLoading }) => {
           </Button>
           <Text>{getValues("profilePicture")?.name}</Text>
         </HStack>
-        {errors?.profilePicture && <FormErrorMessage>{errors.profilePicture.message}</FormErrorMessage>}
+        {(errors?.profilePicture || validationErrors?.profilePicture) && (
+          <FormErrorMessage>{errors?.profilePicture?.message || validationErrors?.profilePicture}</FormErrorMessage>
+        )}
       </FormControl>
 
       <Button type="submit" colorScheme="blue" disabled={isLoading} display="flex" justify="center" align="center">

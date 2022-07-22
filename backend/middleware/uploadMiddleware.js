@@ -18,6 +18,7 @@ function fileFilter(req, file, cb) {
     if (allowedFiles.includes(file.mimetype)) {
       return cb(null, true);
     }
+    req.validationErrors = { ...req.validationErrors, profilePicture: "Image not in supported format" };
     cb(null, false);
   } catch (error) {
     console.log(error);

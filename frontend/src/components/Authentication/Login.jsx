@@ -10,6 +10,7 @@ import {
   Divider,
   InputRightElement,
   Box,
+  Spinner,
 } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/icons";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
@@ -22,12 +23,13 @@ const SignupForm = styled.form`
   gap: 1rem;
 `;
 
-const Login = ({ onLogin }) => {
+const Login = ({ onLogin, isLoading }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -49,6 +51,11 @@ const Login = ({ onLogin }) => {
   };
 
   const passwordValidator = { ...register("password", { required: "A password is require to log you in" }) };
+
+  const setGuestLoginHandler = () => {
+    setValue("email", "guest@chatrbox.com");
+    setValue("password", "Guest@123");
+  };
 
   const submitHandler = (userData) => {
     onLogin(userData);
@@ -85,16 +92,16 @@ const Login = ({ onLogin }) => {
       </FormControl>
 
       <Box display="flex" flexDir="column" gap={3} mt={5}>
-        <Button type="submit" colorScheme="blue">
-          Login
+        <Button type="submit" colorScheme="blue" disabled={isLoading}>
+          {isLoading ? <Spinner /> : "Login"}
         </Button>
         <Box position="relative" display="flex" justifyContent="center" alignItems="center" my={5}>
           <Text fontSize="lg" position="absolute" zIndex={10} background="white" px={3}>
             OR
           </Text>
-          <Divider />
+          <Divider sx={{ borderColor: "#888" }} />
         </Box>
-        <Button type="submit" colorScheme="red">
+        <Button type="button" onClick={setGuestLoginHandler} colorScheme="red">
           Sign in as Guest
         </Button>
       </Box>
