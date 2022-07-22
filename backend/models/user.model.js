@@ -44,4 +44,14 @@ userSchema.methods.validatePassword = async function (inputPassword) {
   return await bcrypt.compare(inputPassword, this.password);
 };
 
+userSchema.methods.clearRefreshToken = async function () {
+  this.refreshToken = undefined;
+  await this.save();
+};
+
+userSchema.methods.recylceRefreshToken = async function (refreshToken) {
+  this.refreshToken = refreshToken;
+  await this.save();
+};
+
 module.exports = mongoose.model("User", userSchema);

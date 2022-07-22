@@ -31,8 +31,8 @@ const Login = ({ onLogin }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: "",
-      password: "",
+      email: "test@gmail.com",
+      password: "Whatever123!",
     },
     mode: "all",
   });
@@ -47,6 +47,8 @@ const Login = ({ onLogin }) => {
       },
     }),
   };
+
+  const passwordValidator = { ...register("password", { required: "A password is require to log you in" }) };
 
   const submitHandler = (userData) => {
     onLogin(userData);
@@ -67,6 +69,7 @@ const Login = ({ onLogin }) => {
             id="password"
             placeholder="Password"
             type={showPassword ? "text" : "password"}
+            {...passwordValidator}
           />
           <InputRightElement>
             <Icon

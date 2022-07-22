@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Box, Text, Tabs, TabList, Tab, TabPanel, TabPanels } from "@chakra-ui/react";
 import Login from "../components/Authentication/Login";
 import Signup from "../components/Authentication/Signup";
-import { registerUser, loginUser } from "../features/authSlice";
+import { registerUser, loginUser, reset } from "../features/authSlice";
 
 const Home = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -32,6 +32,8 @@ const Home = () => {
     if (isSuccessLogin) {
       navigate("/chats");
     }
+
+    dispatch(reset());
   }, [isSuccessRegister, isSuccessLogin, navigate]);
 
   return (

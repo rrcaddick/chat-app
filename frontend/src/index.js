@@ -29,6 +29,8 @@ const theme = extendTheme({
   },
 });
 
+console.log("Index ran");
+
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>

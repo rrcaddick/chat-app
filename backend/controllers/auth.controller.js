@@ -3,6 +3,7 @@ const fs = require("fs/promises");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user.model");
+const refreshCookieOptions = require("../config/refreshCookieOptions");
 
 const registerUser = asyncHandler(async (req, res, next) => {
   const {
@@ -39,13 +40,75 @@ const registerUser = asyncHandler(async (req, res, next) => {
 });
 
 const loginUser = asyncHandler(async (req, res, next) => {
-  const { user } = req;
+  const {
+    user,
+    cookies: { refreshToken: refreshTokenCookie },
+  } = req;
 
-  res.status(200).json({
-    name: user.name,
-    email: user.email,
-    profilePicture: user.profilePicture,
-    token: generateAccessToken(user._id),
+  try {
+    const refreshToken = await generateRefreshToken(user);
+    res
+      .status(200)
+      .clearCookie("refreshToken", refreshCookieOptions)
+      .cookie("refreshToken", refreshToken, refreshCookieOptions)
+      .json({
+        name: user.name,
+        email: user.email,
+        profilePicture: user.profilePicture,
+        token: generateAccessToken(user._id),
+      });
+  } catch (error) {
+    res.status(403);
+    throw new Error("Unable to generate refresh token");
+  }
+});
+
+const refreshToken = asyncHandler(async (req, res, next) => {
+  const {
+    cookies: { refreshToken: refreshTokenCookie },
+  } = req;
+
+  const user = await User.findOne({ refreshTokenCookie });
+
+  if (!user) {
+    res.status(403).clearCookie("refreshToken", refreshCookieOptions);
+    throw new Error("Invalid refresh token");
+  }
+
+  try {
+    const { userId } = jwt.verify(refreshTokenCookie, process.env.JWT_REFRESH_SECRET);
+
+    if (userId !== user._id.toString()) {
+      res.status(403).clearCookie("refreshToken", refreshCookieOptions);
+      throw new Error("Invalid refresh token");
+    }
+
+    const refreshToken = await generateRefreshToken(user);
+
+    res
+      .status(200)
+      .clearCookie("refreshToken", refreshCookieOptions)
+      .cookie("refreshToken", refreshToken, refreshCookieOptions)
+      .json({
+        token: generateAccessToken(user._id),
+      });
+  } catch (error) {
+    res.status(403).clearCookie("refreshToken", refreshCookieOptions);
+    throw new Error("Unable to generate refresh token");
+  }
+});
+
+const logoutUser = asyncHandler(async (req, res, next) => {
+  const {
+    cookies: { refreshToken: refreshTokenCookie },
+  } = req;
+
+  const user = await User.findOne({ refreshTokenCookie });
+
+  if (user) await user.clearRefreshToken();
+
+  res.status(200).clearCookie("refreshToken", refreshCookieOptions).json({
+    message: "Logged out successfully",
   });
 });
 
@@ -55,7 +118,19 @@ const generateAccessToken = (userId) => {
   return jwt.sign({ userId }, accessSecret, { expiresIn: accessExpiry });
 };
 
+const generateRefreshToken = async (user) => {
+  const refreshSecret = process.env.JWT_REFRESH_SECRET;
+  const refreshExpiry = process.env.JWT_REFRESH_EXPIRY;
+
+  const newRefreshToken = jwt.sign({ userId: user._id }, refreshSecret, { expiresIn: refreshExpiry });
+  await user.recylceRefreshToken(newRefreshToken);
+
+  return newRefreshToken;
+};
+
 module.exports = {
   registerUser,
   loginUser,
+  refreshToken,
+  logoutUser,
 };

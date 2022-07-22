@@ -1,11 +1,21 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import authAdapter from "../Services/Adapters/authAdapter";
+import tokenRequest from "../Services/Adapters/tokenInterceptor";
+
+const user = localStorage.getItem("user");
 
 const initialState = {
-  user: null,
+  user: user || null,
   isLoading: false,
-  isSuccess: { login: false, register: false, logout: false },
-  isError: false,
+  isSuccess: {
+    login: false,
+    register: false,
+    logout: false,
+  },
+  isError: {
+    login: false,
+    register: false,
+  },
   errors: {},
   message: "",
 };
@@ -21,7 +31,7 @@ export const registerUser = createAsyncThunk("auth/registerUser", async (userDat
 
 export const loginUser = createAsyncThunk("auth/loginUser", async (userData, thunkAPI) => {
   try {
-    return await authAdapter.loginUser(userData);
+    return await tokenRequest.loginUser(userData);
   } catch (error) {
     const data = error?.response?.data;
     thunkAPI.rejectWithValue(data);
@@ -30,16 +40,7 @@ export const loginUser = createAsyncThunk("auth/loginUser", async (userData, thu
 
 export const logoutUser = createAsyncThunk("auth/logoutUser", async (_, thunkAPI) => {
   try {
-    return await authAdapter.logoutUser();
-  } catch (error) {
-    const data = error?.response?.data;
-    thunkAPI.rejectWithValue(data);
-  }
-});
-
-export const refreshToken = createAsyncThunk("auth/refreshToken", async (_, thunkAPI) => {
-  try {
-    return await authAdapter.refreshToken();
+    return await tokenRequest.logoutUser();
   } catch (error) {
     const data = error?.response?.data;
     thunkAPI.rejectWithValue(data);
@@ -50,7 +51,23 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    reset: (state) => initialState,
+    reset: (state) => {
+      return {
+        ...state,
+        isLoading: false,
+        isSuccess: {
+          login: false,
+          register: false,
+          logout: false,
+        },
+        isError: {
+          login: false,
+          register: false,
+        },
+        errors: {},
+        message: "",
+      };
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -68,9 +85,10 @@ const authSlice = createSlice({
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(loginUser.fulfilled, (state, { payload }) => {
+      .addCase(loginUser.fulfilled, (state, { payload: { name, email, profilePicture } }) => {
         state.isLoading = false;
         state.isSuccess.login = true;
+        state.user = { name, email, profilePicture };
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         state.isLoading = false;
@@ -82,19 +100,21 @@ const authSlice = createSlice({
       .addCase(logoutUser.fulfilled, (state, { payload }) => {
         state.isLoading = false;
         state.isSuccess.logout = true;
+        state.user = null;
+        state.isLoading = false;
+        state.isSuccess = {
+          login: false,
+          register: false,
+          logout: false,
+        };
+        state.isError = {
+          login: false,
+          register: false,
+        };
+        state.errors = {};
+        state.message = "";
       })
       .addCase(logoutUser.rejected, (state, { payload }) => {
-        state.isLoading = false;
-        state.isError = true;
-      })
-      .addCase(refreshToken.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(refreshToken.fulfilled, (state, { payload }) => {
-        state.isLoading = false;
-        state.isSuccess.register = true;
-      })
-      .addCase(refreshToken.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isError = true;
       });
