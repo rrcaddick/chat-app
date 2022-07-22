@@ -16,6 +16,7 @@ import { Icon } from "@chakra-ui/icons";
 import { FaRegEyeSlash, FaRegEye, FaPhotoVideo } from "react-icons/fa";
 import styled from "@emotion/styled";
 import { useForm } from "react-hook-form";
+import { validate } from "uuid";
 
 const SignupForm = styled.form`
   display: flex;
@@ -47,6 +48,7 @@ const Signup = ({ onSignup, isLoading }) => {
     getValues,
     setValue,
     handleSubmit,
+    setError,
     trigger,
     formState: { errors },
   } = useForm({
@@ -61,8 +63,17 @@ const Signup = ({ onSignup, isLoading }) => {
   });
 
   const onFileChange = (e) => {
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
     const file = e.target.files[0];
-    setValue("profilePicture", file);
+
+    if (!allowedTypes.includes(file?.type)) {
+      return setError("profilePicture", {
+        type: "custom",
+        message: "Profile picture is not in an accepted format. Accepted formats: jpeg, jpg, png, webp",
+      });
+    }
+
+    setValue("profilePicture", file, { shouldValidate: true });
     trigger("profilePicture");
   };
 
@@ -174,11 +185,21 @@ const Signup = ({ onSignup, isLoading }) => {
         <HStack>
           <Button colorScheme="green" display="flex" position="relative" borderRadius="50%">
             <Icon as={FaPhotoVideo} />
-            <UploadInput id="profilePicture" onChange={onFileChange} />
+            <UploadInput
+              id="profilePicture"
+              {...register("profilePicture", {
+                validate: (profilePicture) => {
+                  if (!profilePicture?.name) return "Please provide a profile picture";
+                },
+              })}
+              onChange={onFileChange}
+            />
           </Button>
           <Text>{getValues("profilePicture")?.name}</Text>
         </HStack>
+        {errors?.profilePicture && <FormErrorMessage>{errors.profilePicture.message}</FormErrorMessage>}
       </FormControl>
+
       <Button type="submit" colorScheme="blue" disabled={isLoading} display="flex" justify="center" align="center">
         {isLoading ? <Spinner /> : "Sign Up"}
       </Button>
