@@ -5,7 +5,7 @@ import tokenRequest from "../Services/Adapters/tokenInterceptor";
 const user = localStorage.getItem("user");
 
 const initialState = {
-  user: user || null,
+  user: user ? JSON.parse(user) : null,
   isLoading: false,
   isSuccess: {
     login: false,
@@ -33,8 +33,8 @@ export const loginUser = createAsyncThunk("auth/loginUser", async (userData, thu
   try {
     return await tokenRequest.loginUser(userData);
   } catch (error) {
-    const data = error?.response?.data;
-    return thunkAPI.rejectWithValue(data);
+    const message = error?.response?.data;
+    return thunkAPI.rejectWithValue(message);
   }
 });
 
@@ -42,8 +42,8 @@ export const logoutUser = createAsyncThunk("auth/logoutUser", async (_, thunkAPI
   try {
     return await tokenRequest.logoutUser();
   } catch (error) {
-    const data = error?.response?.data;
-    return thunkAPI.rejectWithValue(data);
+    const message = error?.response?.data;
+    return thunkAPI.rejectWithValue(message);
   }
 });
 
@@ -81,6 +81,7 @@ const authSlice = createSlice({
       .addCase(registerUser.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isError = true;
+        state.message = payload.message;
         state.validationErrors = payload?.validationErrors || null;
       })
       .addCase(loginUser.pending, (state) => {
@@ -93,7 +94,8 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.rejected, (state, { payload }) => {
         state.isLoading = false;
-        state.isError = true;
+        state.isError.login = true;
+        state.message = payload.message;
       })
       .addCase(logoutUser.pending, (state) => {
         state.isLoading = true;

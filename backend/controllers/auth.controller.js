@@ -68,12 +68,17 @@ const refreshToken = asyncHandler(async (req, res, next) => {
     cookies: { refreshToken: refreshTokenCookie },
   } = req;
 
-  const user = await User.findOne({ refreshTokenCookie });
+  if (!refreshTokenCookie) {
+    res.status(403).clearCookie("refreshToken", refreshCookieOptions);
+    throw new Error("Invalid refresh token");
+  }
+
+  const user = await User.findOne({ refreshToken: refreshTokenCookie });
 
   try {
     const { userId } = jwt.verify(refreshTokenCookie, process.env.JWT_REFRESH_SECRET);
 
-    if (!user || userId !== user._id.toString()) {
+    if (!user) {
       await User.revokeToken(userId);
       res.status(403).clearCookie("refreshToken", refreshCookieOptions);
       throw new Error("Invalid refresh token");

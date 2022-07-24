@@ -1,43 +1,26 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { getChats } from "../features/chatSlice";
-import { Button } from "@chakra-ui/react";
-import { logoutUser } from "../features/authSlice";
+import { getUserList } from "../features/userSlice";
+import AppBar from "../components/Layout/AppBar";
+import { useDisclosure } from "@chakra-ui/react";
+import SideDrawer from "../components/Layout/SideDrawer";
 
 const Chats = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  // const { chats } = useSelector((store) => store.chat);
-  const {
-    isSuccess: { logout: logoutSuccess },
-  } = useSelector((store) => store.auth);
+  const { users } = useSelector((store) => store.user);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-  useEffect(() => {
-    dispatch(getChats());
+  useEffect(() => {}, []);
 
-    if (logoutSuccess) {
-      navigate("/");
-    }
-  }, [dispatch, logoutSuccess, navigate]);
+  const searchHandler = ({ search }) => {
+    dispatch(getUserList(search));
+  };
 
   return (
-    <div>
-      <Button
-        onClick={() => {
-          navigate("/");
-        }}
-      >
-        Navigate
-      </Button>
-      <Button
-        onClick={() => {
-          dispatch(logoutUser());
-        }}
-      >
-        Logout
-      </Button>
-    </div>
+    <>
+      <SideDrawer isOpen={isOpen} onClose={onClose} onSearch={searchHandler} />
+      <AppBar onOpen={onOpen}></AppBar>;
+    </>
   );
 };
 

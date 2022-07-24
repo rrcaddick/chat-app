@@ -19,13 +19,18 @@ export const initAxiosInterceptors = async (store) => {
       localStorage.setItem("user", JSON.stringify(user));
       return user;
     } catch (error) {
-      Promise.reject(error);
+      return Promise.reject(error);
     }
   };
 
   const refreshToken = async () => {
-    const response = await axios.get(`/api/auth/refreshToken`);
-    token = response.token;
+    try {
+      const response = await axios.get(`/api/auth/refreshToken`);
+      token = response.data.token;
+    } catch (error) {
+      store.dispatch(logoutUser());
+      return Promise.reject(error);
+    }
   };
 
   tokenRequest.logoutUser = async () => {
@@ -40,11 +45,10 @@ export const initAxiosInterceptors = async (store) => {
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
-
       return config;
     },
     (error) => {
-      return Promise.reject(error);
+      return Promise.reject(error.response);
     }
   );
 
@@ -54,14 +58,7 @@ export const initAxiosInterceptors = async (store) => {
       const config = error.config;
       if (error.response.status === 401) {
         await refreshToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
         return tokenRequest(config);
-      }
-
-      if (error.response.status === 403) {
-        store.dispatch(logoutUser());
       }
 
       return Promise.reject(error);

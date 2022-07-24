@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler");
 const Chat = require("../models/chat.model");
 
 const getChats = asyncHandler(async (req, res, next) => {
+  const { user } = req;
   const chats = await Chat.find();
 
   res.status(200).json({

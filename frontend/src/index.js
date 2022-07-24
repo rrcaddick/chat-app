@@ -16,10 +16,8 @@ const theme = extendTheme({
         margin: 0,
         padding: 0,
         boxSizing: "border-box",
-        fontSize: "62.5%",
       },
       body: {
-        fontSize: "1.6rem",
         fontFamily: "work sans",
       },
       a: {
@@ -29,14 +27,12 @@ const theme = extendTheme({
   },
 });
 
-console.log("Index ran");
-
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <ReduxProvider store={store}>
-        <ChakraProvider>
+        <ChakraProvider theme={theme}>
           <App />
         </ChakraProvider>
       </ReduxProvider>

@@ -5,6 +5,7 @@ const connectDb = require("./config/connectDb");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const port = process.env.PORT || 5000;
+const protect = require("./middleware/authMiddleware");
 
 connectDb();
 const app = express();
@@ -15,8 +16,9 @@ app.use(cookieParser());
 
 app.use("/profile-pictures", express.static(path.join(__dirname, "assets", "images", "profile-pictures")));
 
-app.use("/api/chats", require("./routes/chat.routes"));
+app.use("/api/chats", protect, require("./routes/chat.routes"));
 app.use("/api/auth", require("./routes/auth.routes"));
+app.use("/api/users", protect, require("./routes/user.routes"));
 
 // Not found
 app.use(require("./middleware/notFound"));

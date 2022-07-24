@@ -1,5 +1,5 @@
 /* eslint-disable no-control-regex */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   FormControl,
   Input,
@@ -11,13 +11,17 @@ import {
   InputRightElement,
   Box,
   Spinner,
+  Alert,
+  AlertIcon,
+  AlertTitle,
 } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/icons";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import styled from "@emotion/styled";
 import { useForm } from "react-hook-form";
+import { useSelector, useDispatch } from "react-redux";
 
-const SignupForm = styled.form`
+const LoginForm = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -25,6 +29,10 @@ const SignupForm = styled.form`
 
 const Login = ({ onLogin, isLoading }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const {
+    isError: { login: isError },
+    message,
+  } = useSelector((store) => store.auth);
 
   const {
     register,
@@ -33,7 +41,7 @@ const Login = ({ onLogin, isLoading }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: "test@gmail.com",
+      email: "rrcaddick@gmail.com",
       password: "Whatever123!",
     },
     mode: "all",
@@ -62,50 +70,58 @@ const Login = ({ onLogin, isLoading }) => {
   };
 
   return (
-    <SignupForm noValidate onSubmit={handleSubmit(submitHandler)}>
-      <FormControl isInvalid={Boolean(errors?.email)} isRequired>
-        <Input variant="flushed" px={3} id="email" type="email" placeholder="Email Address" {...emailValidator} />
-        {errors?.email && <FormErrorMessage>{errors.email.message}</FormErrorMessage>}
-      </FormControl>
+    <>
+      {isError && (
+        <Alert status="error" mb="1rem">
+          <AlertIcon />
+          <AlertTitle>{message}</AlertTitle>
+        </Alert>
+      )}
+      <LoginForm noValidate onSubmit={handleSubmit(submitHandler)}>
+        <FormControl isInvalid={Boolean(errors?.email)} isRequired>
+          <Input variant="flushed" px={3} id="email" type="email" placeholder="Email Address" {...emailValidator} />
+          {errors?.email && <FormErrorMessage>{errors.email.message}</FormErrorMessage>}
+        </FormControl>
 
-      <FormControl isInvalid={Boolean(errors?.password)} isRequired>
-        <InputGroup>
-          <Input
-            variant="flushed"
-            px={3}
-            id="password"
-            placeholder="Password"
-            type={showPassword ? "text" : "password"}
-            {...passwordValidator}
-          />
-          <InputRightElement>
-            <Icon
-              as={showPassword ? FaRegEyeSlash : FaRegEye}
-              cursor="pointer"
-              onClick={() => {
-                setShowPassword((state) => !state);
-              }}
+        <FormControl isInvalid={Boolean(errors?.password)} isRequired>
+          <InputGroup>
+            <Input
+              variant="flushed"
+              px={3}
+              id="password"
+              placeholder="Password"
+              type={showPassword ? "text" : "password"}
+              {...passwordValidator}
             />
-          </InputRightElement>
-        </InputGroup>
-        {errors?.password && <FormErrorMessage>{errors.password.message}</FormErrorMessage>}
-      </FormControl>
+            <InputRightElement>
+              <Icon
+                as={showPassword ? FaRegEyeSlash : FaRegEye}
+                cursor="pointer"
+                onClick={() => {
+                  setShowPassword((state) => !state);
+                }}
+              />
+            </InputRightElement>
+          </InputGroup>
+          {errors?.password && <FormErrorMessage>{errors.password.message}</FormErrorMessage>}
+        </FormControl>
 
-      <Box display="flex" flexDir="column" gap={3} mt={5}>
-        <Button type="submit" colorScheme="blue" disabled={isLoading}>
-          {isLoading ? <Spinner /> : "Login"}
-        </Button>
-        <Box position="relative" display="flex" justifyContent="center" alignItems="center" my={5}>
-          <Text fontSize="lg" position="absolute" zIndex={10} background="white" px={3}>
-            OR
-          </Text>
-          <Divider sx={{ borderColor: "#888" }} />
+        <Box display="flex" flexDir="column" gap={3} mt={5}>
+          <Button type="submit" colorScheme="blue" disabled={isLoading}>
+            {isLoading ? <Spinner /> : "Login"}
+          </Button>
+          <Box position="relative" display="flex" justifyContent="center" alignItems="center" my={5}>
+            <Text fontSize="lg" position="absolute" zIndex={10} background="white" px={3}>
+              OR
+            </Text>
+            <Divider sx={{ borderColor: "#888" }} />
+          </Box>
+          <Button type="button" onClick={setGuestLoginHandler} colorScheme="red">
+            Sign in as Guest
+          </Button>
         </Box>
-        <Button type="button" onClick={setGuestLoginHandler} colorScheme="red">
-          Sign in as Guest
-        </Button>
-      </Box>
-    </SignupForm>
+      </LoginForm>
+    </>
   );
 };
 
