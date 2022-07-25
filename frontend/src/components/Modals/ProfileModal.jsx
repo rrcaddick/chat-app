@@ -17,7 +17,7 @@ const ProfileModal = ({ name, profilePicture, email }) => {
 
   return (
     <>
-      <Text width="100%" onClick={onOpen}>
+      <Text width="100%" height="100%" onClick={onOpen}>
         Profile
       </Text>
 
