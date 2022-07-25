@@ -4,31 +4,43 @@ const Chat = require("../models/chat.model");
 
 const getChats = asyncHandler(async (req, res, next) => {
   const { user } = req;
-  const chats = await Chat.find();
+  const chats = await Chat.find({ users: user }).populate("users").exec();
+
+  const updatedChats = chats.map((chat) => {
+    if (chat.isGroupChat) return chat;
+    return {
+      ...chat._doc,
+      chatName: chat.users.find((u) => u._id.toString() !== user._id.toString()).name,
+    };
+  });
 
   res.status(200).json({
-    chats,
+    chats: updatedChats,
   });
 });
 
-const addChat = asyncHandler(async (req, res, next) => {
+const addEditChat = asyncHandler(async (req, res, next) => {
   const {
-    body: { chatName, chatType, users },
+    user,
+    body: { userId },
   } = req;
 
-  const chat = await Chat.create({ chatName, chatType, users });
+  let chat = await Chat.findOne({ isGroupChat: false, users: { $all: [user._id, userId] } })
+    .populate("users", "-password -refreshToken")
+    .populate("latestMessage");
+
+  if (!chat) {
+    chat = await Chat.create({ chatName: "sender", isGroupChat: false, users: [user._id, userId] });
+    chat = await Chat.findById(chat._id).populate("users", "-password -refreshToken").populate("latestMessage");
+  }
+
+  const updatedChat = {
+    ...chat._doc,
+    chatName: chat.users.find((u) => u._id.toString() !== user._id.toString()).name,
+  };
 
   res.status(200).json({
-    chat,
-  });
-});
-
-const getChat = asyncHandler(async (req, res, next) => {
-  const { chatId } = req.query;
-  const chat = await Chat.findById(chatId);
-
-  res.status(200).json({
-    chat,
+    chat: updatedChat,
   });
 });
 
@@ -57,8 +69,7 @@ const deleteChat = asyncHandler(async (req, res, next) => {
 
 module.exports = {
   getChats,
-  getChat,
-  addChat,
+  addEditChat,
   updateChat,
   deleteChat,
 };

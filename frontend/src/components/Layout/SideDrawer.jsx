@@ -26,7 +26,7 @@ const SearchForm = styled.form`
   padding-bottom: 2rem;
 `;
 
-const SideDrawer = ({ isOpen, onClose, onSearch }) => {
+const SideDrawer = ({ isOpen, onClose, onSearch, onChatSelect }) => {
   const {
     register,
     handleSubmit,
@@ -70,7 +70,7 @@ const SideDrawer = ({ isOpen, onClose, onSearch }) => {
             {!isLoading && (
               <Stack>
                 {users.map((user) => (
-                  <UserListItem key={user._id} {...user} onClick={() => {}} />
+                  <UserListItem key={user._id} {...user} onChatSelect={onChatSelect} />
                 ))}
               </Stack>
             )}

@@ -7,13 +7,8 @@ const getChats = async () => {
   return response.data;
 };
 
-const getChat = async (chatId) => {
-  const response = await tokenRequest.get(`${API_URL}/${chatId}`);
-  return response.data;
-};
-
-const addChat = async (chatData) => {
-  const response = await tokenRequest.post(`${API_URL}`, chatData);
+const addEditChat = async (userId) => {
+  const response = await tokenRequest.post(`${API_URL}`, { userId });
   return response.data;
 };
 
@@ -29,8 +24,7 @@ const deleteChat = async (chatId) => {
 
 const chatAdapter = {
   getChats,
-  getChat,
-  addChat,
+  addEditChat,
   updateChat,
   deleteChat,
 };

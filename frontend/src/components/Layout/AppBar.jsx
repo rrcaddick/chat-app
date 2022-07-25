@@ -11,10 +11,17 @@ import {
   MenuItem,
   MenuDivider,
 } from "@chakra-ui/react";
+import styled from "@emotion/styled";
 import { SearchIcon, BellIcon } from "@chakra-ui/icons";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../../features/authSlice";
 import ProfileModal from "../Modals/ProfileModal";
+
+const MainContent = styled.main`
+  display: flex;
+  height: 100%;
+  padding: 0.5rem;
+`;
 
 const AppBar = ({ onOpen, children }) => {
   const { user } = useSelector((store) => store.auth);
@@ -59,7 +66,7 @@ const AppBar = ({ onOpen, children }) => {
           </Menu>
         </Box>
       </Box>
-      <main>{children}</main>
+      <MainContent>{children}</MainContent>
     </>
   );
 };
