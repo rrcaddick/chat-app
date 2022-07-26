@@ -1,10 +1,10 @@
 import { Avatar, Box, Text } from "@chakra-ui/react";
 
-const UserListItem = ({ _id, name, profilePicture, email, onChatSelect }) => {
+const UserListItem = ({ _id, name, profilePicture, email, onSelect }) => {
   return (
     <Box
       onClick={() => {
-        onChatSelect(_id);
+        onSelect({ users: [{ _id, name }], chatName: "sender", isGroupChat: false });
       }}
       cursor="pointer"
       bg="#E8E8E8"

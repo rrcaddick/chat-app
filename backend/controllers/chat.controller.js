@@ -22,21 +22,25 @@ const getChats = asyncHandler(async (req, res, next) => {
 const addEditChat = asyncHandler(async (req, res, next) => {
   const {
     user,
-    body: { userId },
+    body: { users, chatName, isGroupChat },
   } = req;
 
-  let chat = await Chat.findOne({ isGroupChat: false, users: { $all: [user._id, userId] } })
-    .populate("users", "-password -refreshToken")
-    .populate("latestMessage");
+  let chat;
+
+  if (!isGroupChat) {
+    chat = await Chat.findOne({ isGroupChat, users: { $all: [user._id, users[0]] } })
+      .populate("users", "-password -refreshToken")
+      .populate("latestMessage");
+  }
 
   if (!chat) {
-    chat = await Chat.create({ chatName: "sender", isGroupChat: false, users: [user._id, userId] });
+    chat = await Chat.create({ chatName, isGroupChat, users: [user._id, ...users] });
     chat = await Chat.findById(chat._id).populate("users", "-password -refreshToken").populate("latestMessage");
   }
 
   const updatedChat = {
     ...chat._doc,
-    chatName: chat.users.find((u) => u._id.toString() !== user._id.toString()).name,
+    chatName: isGroupChat ? chat.chatName : chat.users.find((u) => u._id.toString() !== user._id.toString()).name,
   };
 
   res.status(200).json({

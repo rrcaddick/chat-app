@@ -7,8 +7,8 @@ const getChats = async () => {
   return response.data;
 };
 
-const addEditChat = async (userId) => {
-  const response = await tokenRequest.post(`${API_URL}`, { userId });
+const addEditChat = async (chatData) => {
+  const response = await tokenRequest.post(`${API_URL}`, chatData);
   return response.data;
 };
 

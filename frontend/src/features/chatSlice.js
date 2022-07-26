@@ -20,9 +20,9 @@ export const getChats = createAsyncThunk("chat/getsChats", async (_, thunkAPI) =
   }
 });
 
-export const addEditChat = createAsyncThunk("chat/addEditChat", async (userId, thunkAPI) => {
+export const addEditChat = createAsyncThunk("chat/addEditChat", async (chatData, thunkAPI) => {
   try {
-    return await chatAdapter.addEditChat(userId);
+    return await chatAdapter.addEditChat(chatData);
   } catch (error) {
     const data = error?.response?.data;
     thunkAPI.rejectWithValue(data);
@@ -61,7 +61,7 @@ const chatSlice = createSlice({
         state.selectedChat = payload?.chat || [];
         const existingChat = state.chats.find((chat) => chat._id === payload.chat._id);
         if (!existingChat) {
-          state.chats.push(payload.chat);
+          state.chats = [payload.chat, ...state.chats];
         }
       })
       .addCase(addEditChat.rejected, (state, { payload }) => {

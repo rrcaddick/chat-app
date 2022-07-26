@@ -1,8 +1,8 @@
-import { AddIcon } from "@chakra-ui/icons";
-import { Box, Button, Spinner, Stack, Text } from "@chakra-ui/react";
+import { Box, Spinner, Stack, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
+import AddGroupChatModal from "../Modals/AddGroupChatModal";
 
-const ChatList = ({ onSelect }) => {
+const ChatList = ({ onSelect, onGroupCreate, onSearch }) => {
   const { chats, selectedChat, isLoading } = useSelector((store) => store.chat);
 
   return (
@@ -26,9 +26,7 @@ const ChatList = ({ onSelect }) => {
         width="100%"
       >
         My Chats
-        <Button display="flex" fontSize={{ base: "10px", md: "10px", lg: "17px" }} rightIcon={<AddIcon />}>
-          Group Chat
-        </Button>
+        <AddGroupChatModal onGroupCreate={onGroupCreate} onSearch={onSearch} />
       </Box>
 
       <Box

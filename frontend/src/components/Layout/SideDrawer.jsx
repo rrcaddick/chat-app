@@ -70,7 +70,7 @@ const SideDrawer = ({ isOpen, onClose, onSearch, onChatSelect }) => {
             {!isLoading && (
               <Stack>
                 {users.map((user) => (
-                  <UserListItem key={user._id} {...user} onChatSelect={onChatSelect} />
+                  <UserListItem key={user._id} {...user} onSelect={onChatSelect} />
                 ))}
               </Stack>
             )}
