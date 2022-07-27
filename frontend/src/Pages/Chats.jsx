@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getUserList, reset as resetUsers } from "../features/userSlice";
 import { addEditChat, deleteLeaveChat, getChats, setSelectedChat } from "../features/chatSlice";
+import { getMessages, addMessage } from "../features/messageSlice";
 import AppBar from "../components/Layout/AppBar";
 import { useDisclosure } from "@chakra-ui/react";
 import SideDrawer from "../components/Layout/SideDrawer";
@@ -46,9 +47,18 @@ const Chats = () => {
     dispatch(setSelectedChat(chat));
   };
 
+  const sendMessageHandler = ({ message }) => {
+    const messageData = { chatId: selectedChat._id, content: message };
+    dispatch(addMessage(messageData));
+  };
+
   useEffect(() => {
     dispatch(getChats());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (selectedChat) dispatch(getMessages(selectedChat._id));
+  }, [dispatch, selectedChat]);
 
   return (
     <>
@@ -64,6 +74,7 @@ const Chats = () => {
           onSearch={searchHandler}
           onAddEditGroup={addEditChatHandler}
           onDeleteLeaveChat={deleteLeaveChatHandler}
+          onSendMessage={sendMessageHandler}
         />
       </AppBar>
     </>

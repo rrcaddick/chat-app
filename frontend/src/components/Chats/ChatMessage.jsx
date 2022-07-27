@@ -1,17 +1,48 @@
-import { ArrowBackIcon } from "@chakra-ui/icons";
-import { Box, IconButton, Text } from "@chakra-ui/react";
+import { ArrowBackIcon, EmailIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Button,
+  FormControl,
+  IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
+  Spinner,
+  Text,
+} from "@chakra-ui/react";
+import styled from "@emotion/styled";
 import { useSelector, useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
 import { clearSelectedChat } from "../../features/chatSlice";
 import AddUpdateGroupChatModal from "../Modals/AddUpdateGroupChatModal";
 import ProfileModal from "../Modals/ProfileModal";
 
-const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat }) => {
+const MessageForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  margin-top: 3em;
+  gap: 1rem;
+`;
+
+const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessage }) => {
   const dispatch = useDispatch();
   const { selectedChat } = useSelector((store) => store.chat);
   const { user } = useSelector((store) => store.auth);
+  const { isLoading, messages } = useSelector((store) => store.message);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useForm({ mode: "all" });
 
   const clearSelectedChatHandler = () => {
     dispatch(clearSelectedChat());
+  };
+
+  const sendMessageHandler = (messageData) => {
+    onSendMessage(messageData);
+    reset();
   };
 
   if (!selectedChat)
@@ -43,6 +74,7 @@ const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat }) => {
           <ProfileModal {...selectedChat.users.find((u) => u._id !== user._id)} />
         )}
       </Box>
+
       <Box
         display="flex"
         flexDir="column"
@@ -54,7 +86,39 @@ const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat }) => {
         borderRadius="lg"
         overflowY="hidden"
       >
-        Messages
+        {isLoading && <Spinner size="xl" borderWidth="5px" w={20} h={20} m="auto" alignSelf="center" />}
+        {!isLoading && (
+          <Box>
+            {messages.map((message) => (
+              <p key={message._id}>{message.content}</p>
+            ))}
+          </Box>
+        )}
+        <MessageForm onSubmit={handleSubmit(sendMessageHandler)} noValidate>
+          <FormControl>
+            <InputGroup border="teal">
+              <Input
+                bg="white"
+                px={3}
+                py={6}
+                placeholder="Send a message..."
+                {...register("message", { required: true })}
+              />
+              <InputRightElement h="full" w="auto">
+                <Button
+                  h="full"
+                  leftIcon={<EmailIcon />}
+                  colorScheme="teal"
+                  variant="solid"
+                  borderLeftRadius="0"
+                  disabled={!isValid}
+                >
+                  Send
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+          </FormControl>
+        </MessageForm>
       </Box>
     </>
   );

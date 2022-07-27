@@ -31,7 +31,7 @@ const getMessages = asyncHandler(async (req, res, next) => {
   } = req;
 
   const messages = await Message.find({ chat: chatId })
-    .select("sender content chat")
+    .select("sender content chat createdAt")
     .populate("sender", "name email profilePicture")
     .populate("chat", "chatName isGroupChat users");
 

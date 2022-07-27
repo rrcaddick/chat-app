@@ -16,7 +16,7 @@ export const getChats = createAsyncThunk("chat/getsChats", async (_, thunkAPI) =
     return await chatAdapter.getChats();
   } catch (error) {
     const data = error?.response?.data;
-    thunkAPI.rejectWithValue(data);
+    return thunkAPI.rejectWithValue(data);
   }
 });
 
@@ -25,7 +25,7 @@ export const addEditChat = createAsyncThunk("chat/addEditChat", async (chatData,
     return await chatAdapter.addEditChat(chatData);
   } catch (error) {
     const data = error?.response?.data;
-    thunkAPI.rejectWithValue(data);
+    return thunkAPI.rejectWithValue(data);
   }
 });
 
@@ -34,7 +34,7 @@ export const deleteLeaveChat = createAsyncThunk("chat/deleteLeaveChat", async (d
     return await chatAdapter.deleteLeaveChat(data);
   } catch (error) {
     const data = error?.response?.data;
-    thunkAPI.rejectWithValue(data);
+    return thunkAPI.rejectWithValue(data);
   }
 });
 
