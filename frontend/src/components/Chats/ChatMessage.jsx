@@ -5,7 +5,7 @@ import { clearSelectedChat } from "../../features/chatSlice";
 import AddUpdateGroupChatModal from "../Modals/AddUpdateGroupChatModal";
 import ProfileModal from "../Modals/ProfileModal";
 
-const ChatMessage = ({ onSearch, onAddEditGroup }) => {
+const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat }) => {
   const dispatch = useDispatch();
   const { selectedChat } = useSelector((store) => store.chat);
   const { user } = useSelector((store) => store.auth);
@@ -33,7 +33,12 @@ const ChatMessage = ({ onSearch, onAddEditGroup }) => {
         />
         <Text fontSize={{ base: "28px", md: "30px" }}>{selectedChat.chatName}</Text>
         {selectedChat.isGroupChat ? (
-          <AddUpdateGroupChatModal groupData={selectedChat} onSearch={onSearch} onAddEditGroup={onAddEditGroup} />
+          <AddUpdateGroupChatModal
+            groupData={selectedChat}
+            onSearch={onSearch}
+            onAddEditGroup={onAddEditGroup}
+            onDeleteLeaveChat={onDeleteLeaveChat}
+          />
         ) : (
           <ProfileModal {...selectedChat.users.find((u) => u._id !== user._id)} />
         )}

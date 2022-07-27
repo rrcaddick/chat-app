@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserList, reset as resetUsers } from "../features/userSlice";
-import { addEditChat, getChats, setSelectedChat } from "../features/chatSlice";
+import { addEditChat, deleteLeaveChat, getChats, setSelectedChat } from "../features/chatSlice";
 import AppBar from "../components/Layout/AppBar";
 import { useDisclosure } from "@chakra-ui/react";
 import SideDrawer from "../components/Layout/SideDrawer";
@@ -12,6 +12,8 @@ const Chats = () => {
   const dispatch = useDispatch();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { selectedChat } = useSelector((store) => store.chat);
+  const { user } = useSelector((store) => store.auth);
 
   useEffect(() => {}, []);
 
@@ -20,9 +22,17 @@ const Chats = () => {
   };
 
   const addEditChatHandler = (chatData) => {
-    const userIds = chatData.users.map((user) => user._id);
+    const userIds = chatData.users.map((u) => u._id);
     chatData = { ...chatData, users: userIds };
     dispatch(addEditChat(chatData));
+    dispatch(resetUsers());
+    onClose();
+  };
+
+  const deleteLeaveChatHandler = () => {
+    const userIds = selectedChat.users.map((u) => u._id).filter((u) => u !== user._id);
+    const data = { id: selectedChat._id, chatData: { users: userIds, isGroupChat: selectedChat.isGroupChat } };
+    dispatch(deleteLeaveChat(data));
     dispatch(resetUsers());
     onClose();
   };
@@ -50,7 +60,11 @@ const Chats = () => {
       />
       <AppBar onOpen={onOpen}>
         <ChatList onSelect={selectChatHandler} onAddEditGroup={addEditChatHandler} onSearch={searchHandler} />
-        <ChatMessages onSearch={searchHandler} onAddEditGroup={addEditChatHandler} />
+        <ChatMessages
+          onSearch={searchHandler}
+          onAddEditGroup={addEditChatHandler}
+          onDeleteLeaveChat={deleteLeaveChatHandler}
+        />
       </AppBar>
     </>
   );

@@ -59,23 +59,20 @@ const addEditChat = asyncHandler(async (req, res, next) => {
   });
 });
 
-const updateChat = asyncHandler(async (req, res, next) => {
+const deleteLeaveChat = asyncHandler(async (req, res, next) => {
   const {
-    query: { chatId },
-    body: { chatName, isGroupChat, users },
+    user,
+    params: { chatId },
+    body: { users, isGroupChat },
   } = req;
 
-  const chat = await Chat.findByIdAndUpdate(chatId, { chatName, chatType, users }, { new: true });
+  let chat;
 
-  res.status(200).json({
-    chat,
-  });
-});
-
-const deleteChat = asyncHandler(async (req, res, next) => {
-  const { chatId } = req.query;
-
-  await Chat.findByIdAndDelete(chatId);
+  if (!isGroupChat || users.length === 0) {
+    await Chat.findByIdAndDelete(chatId);
+  } else {
+    await Chat.findByIdAndUpdate(chatId, { users: [...users], groupAdmin: users[0] });
+  }
 
   res.status(200).json({
     chatId,
@@ -85,6 +82,5 @@ const deleteChat = asyncHandler(async (req, res, next) => {
 module.exports = {
   getChats,
   addEditChat,
-  updateChat,
-  deleteChat,
+  deleteLeaveChat,
 };

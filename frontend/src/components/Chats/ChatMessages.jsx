@@ -2,7 +2,7 @@ import { Box } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import ChatMessage from "./ChatMessage";
 
-const ChatMessages = ({ onSearch, onAddEditGroup }) => {
+const ChatMessages = ({ onSearch, onAddEditGroup, onDeleteLeaveChat }) => {
   const { selectedChat } = useSelector((store) => store.chat);
   return (
     <Box
@@ -15,7 +15,12 @@ const ChatMessages = ({ onSearch, onAddEditGroup }) => {
       borderRadius="lg"
       borderWidth="1px"
     >
-      <ChatMessage {...selectedChat} onSearch={onSearch} onAddEditGroup={onAddEditGroup} />
+      <ChatMessage
+        {...selectedChat}
+        onSearch={onSearch}
+        onAddEditGroup={onAddEditGroup}
+        onDeleteLeaveChat={onDeleteLeaveChat}
+      />
     </Box>
   );
 };

@@ -29,6 +29,15 @@ export const addEditChat = createAsyncThunk("chat/addEditChat", async (chatData,
   }
 });
 
+export const deleteLeaveChat = createAsyncThunk("chat/deleteLeaveChat", async (data, thunkAPI) => {
+  try {
+    return await chatAdapter.deleteLeaveChat(data);
+  } catch (error) {
+    const data = error?.response?.data;
+    thunkAPI.rejectWithValue(data);
+  }
+});
+
 const chatSlice = createSlice({
   name: "chat",
   initialState,
@@ -66,6 +75,19 @@ const chatSlice = createSlice({
         state.chats = [payload.chat, ...state.chats];
       })
       .addCase(addEditChat.rejected, (state, { payload }) => {
+        state.isLoading = false;
+        state.isError = true;
+      })
+      .addCase(deleteLeaveChat.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(deleteLeaveChat.fulfilled, (state, { payload: { chatId } }) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.selectedChat = null;
+        state.chats = state.chats.filter((chat) => chat._id !== chatId);
+      })
+      .addCase(deleteLeaveChat.rejected, (state, { payload }) => {
         state.isLoading = false;
         state.isError = true;
       });

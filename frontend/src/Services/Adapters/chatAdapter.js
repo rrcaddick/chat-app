@@ -12,21 +12,15 @@ const addEditChat = async (chatData) => {
   return response.data;
 };
 
-const updateChat = async (chatData) => {
-  const response = await tokenRequest.put(`${API_URL}/${chatData.chatId}`, chatData);
-  return response.data;
-};
-
-const deleteChat = async (chatId) => {
-  const response = await tokenRequest.delete(`${API_URL}/${chatId}`);
+const deleteLeaveChat = async ({ id, chatData }) => {
+  const response = await tokenRequest.post(`${API_URL}/${id}`, chatData);
   return response.data;
 };
 
 const chatAdapter = {
   getChats,
   addEditChat,
-  updateChat,
-  deleteChat,
+  deleteLeaveChat,
 };
 
 export default chatAdapter;

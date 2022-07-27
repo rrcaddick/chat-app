@@ -31,7 +31,7 @@ const GroupChatForm = styled.form`
   gap: 1rem;
 `;
 
-const AddUpdateGroupChatModal = ({ groupData, onAddEditGroup, onSearch }) => {
+const AddUpdateGroupChatModal = ({ groupData, onAddEditGroup, onSearch, onDeleteLeaveChat }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { users, isLoading } = useSelector((store) => store.user);
   const { user } = useSelector((store) => store.auth);
@@ -106,8 +106,6 @@ const AddUpdateGroupChatModal = ({ groupData, onAddEditGroup, onSearch }) => {
     onModalCloseHandler();
   };
 
-  const onLeaveGroupHandler = () => {};
-
   return (
     <>
       {groupData ? (
@@ -154,7 +152,7 @@ const AddUpdateGroupChatModal = ({ groupData, onAddEditGroup, onSearch }) => {
                   />
                 ))}
               </Box>
-              {isAdminUser && (
+              {(isAdminUser || !groupData) && (
                 <>
                   <FormControl isInvalid={Boolean(usersError)}>
                     <Input px={3} placeholder="Search users to add" onChange={searchDebounce} />
@@ -183,7 +181,7 @@ const AddUpdateGroupChatModal = ({ groupData, onAddEditGroup, onSearch }) => {
 
               <ModalFooter gap={2} px={0}>
                 {groupData && (
-                  <Button onClick={onLeaveGroupHandler} colorScheme="red">
+                  <Button onClick={onDeleteLeaveChat} colorScheme="red">
                     Leave Group
                   </Button>
                 )}
