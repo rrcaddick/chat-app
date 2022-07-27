@@ -31,12 +31,14 @@ const GroupChatForm = styled.form`
   gap: 1rem;
 `;
 
-const AddGroupChatModal = ({ groupData, onAddEditGroup, onSearch }) => {
+const AddUpdateGroupChatModal = ({ groupData, onAddEditGroup, onSearch }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { users, isLoading } = useSelector((store) => store.user);
   const { user } = useSelector((store) => store.auth);
   const [groupChatUsers, setGroupChatUsers] = useState([]);
   const [usersError, setUsersError] = useState(null);
+
+  const isAdminUser = user._id === groupData?.groupAdmin;
 
   const dispatch = useDispatch();
 
@@ -141,6 +143,7 @@ const AddGroupChatModal = ({ groupData, onAddEditGroup, onSearch }) => {
                   <UserBadgeItem
                     key={user._id}
                     {...user}
+                    isAdminUser={isAdminUser}
                     onRemove={() => {
                       setGroupChatUsers((state) => {
                         const newUserList = state.filter((x) => x._id !== user._id);
@@ -151,27 +154,31 @@ const AddGroupChatModal = ({ groupData, onAddEditGroup, onSearch }) => {
                   />
                 ))}
               </Box>
-              <FormControl isInvalid={Boolean(usersError)}>
-                <Input px={3} placeholder="Search users to add" onChange={searchDebounce} />
-                {Boolean(usersError) && <FormErrorMessage>{usersError}</FormErrorMessage>}
-              </FormControl>
-              {isLoading && <Spinner size="xl" alignSelf="center" mt={2} />}
-              {!isLoading && (
-                <Stack
-                  overflowY="scroll"
-                  maxHeight="10rem"
-                  sx={{
-                    "::-webkit-scrollbar": { width: "0px" },
-                    "::-webkit-scrollbar-thumb": { background: "rgba(136, 136, 136, 0.281)" },
-                    "::-webkit-scrollbar-thumb:hover": { background: "#555" },
-                  }}
-                >
-                  {users
-                    .filter((user) => !groupChatUsers.find((x) => x._id === user._id))
-                    .map((user) => (
-                      <UserListItem key={user._id} {...user} onSelect={selectHandler} />
-                    ))}
-                </Stack>
+              {isAdminUser && (
+                <>
+                  <FormControl isInvalid={Boolean(usersError)}>
+                    <Input px={3} placeholder="Search users to add" onChange={searchDebounce} />
+                    {Boolean(usersError) && <FormErrorMessage>{usersError}</FormErrorMessage>}
+                  </FormControl>
+                  {isLoading && <Spinner size="xl" alignSelf="center" mt={2} />}
+                  {!isLoading && (
+                    <Stack
+                      overflowY="scroll"
+                      maxHeight="10rem"
+                      sx={{
+                        "::-webkit-scrollbar": { width: "0px" },
+                        "::-webkit-scrollbar-thumb": { background: "rgba(136, 136, 136, 0.281)" },
+                        "::-webkit-scrollbar-thumb:hover": { background: "#555" },
+                      }}
+                    >
+                      {users
+                        .filter((user) => !groupChatUsers.find((x) => x._id === user._id))
+                        .map((user) => (
+                          <UserListItem key={user._id} {...user} onSelect={selectHandler} />
+                        ))}
+                    </Stack>
+                  )}
+                </>
               )}
 
               <ModalFooter gap={2} px={0}>
@@ -191,4 +198,4 @@ const AddGroupChatModal = ({ groupData, onAddEditGroup, onSearch }) => {
     </>
   );
 };
-export default AddGroupChatModal;
+export default AddUpdateGroupChatModal;

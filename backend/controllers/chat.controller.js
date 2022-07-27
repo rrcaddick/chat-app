@@ -40,7 +40,12 @@ const addEditChat = asyncHandler(async (req, res, next) => {
   }
 
   if (!chat) {
-    chat = await Chat.create({ chatName, isGroupChat, users: [user._id, ...users] });
+    chat = await Chat.create({
+      chatName,
+      isGroupChat,
+      users: [user._id, ...users],
+      groupAdmin: isGroupChat ? user._id : undefined,
+    });
     chat = await Chat.findById(chat._id).populate("users", "-password -refreshToken").populate("latestMessage");
   }
 
