@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const { registerUser, loginUser, refreshToken, logoutUser } = require("../controllers/auth.controller");
 const validateInputs = require("../middleware/validatorMiddleware");
-const { validateRegistation, validateLogin } = require("../validators/userValidators");
+const { validateRegistation, validateLogin } = require("../validators/authValidators");
 const upload = require("../middleware/uploadMiddleware");
 
 router.post("/register", upload.single("profilePicture"), validateInputs(validateRegistation), registerUser);

@@ -16,9 +16,10 @@ app.use(cookieParser());
 
 app.use("/profile-pictures", express.static(path.join(__dirname, "assets", "images", "profile-pictures")));
 
-app.use("/api/chats", protect, require("./routes/chat.routes"));
 app.use("/api/auth", require("./routes/auth.routes"));
+app.use("/api/chats", protect, require("./routes/chat.routes"));
 app.use("/api/users", protect, require("./routes/user.routes"));
+app.use("/api/messages", protect, require("./routes/message.routes"));
 
 // Not found
 app.use(require("./middleware/notFound"));
