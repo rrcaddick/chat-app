@@ -1,5 +1,7 @@
+import { ViewIcon } from "@chakra-ui/icons";
 import {
   Button,
+  IconButton,
   Image,
   Modal,
   ModalBody,
@@ -12,15 +14,18 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-const ProfileModal = ({ name, profilePicture, email }) => {
+const ProfileModal = ({ name, profilePicture, email, children }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <>
-      <Text width="100%" height="100%" onClick={onOpen}>
-        Profile
-      </Text>
-
+      {children ? (
+        <Text width="100%" height="100%" onClick={onOpen}>
+          {children}
+        </Text>
+      ) : (
+        <IconButton icon={<ViewIcon />} onClick={onOpen} />
+      )}
       <Modal size="lg" isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent display="flex" alignItems="center" gap={5} py={2}>

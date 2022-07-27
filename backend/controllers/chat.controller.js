@@ -4,7 +4,7 @@ const Chat = require("../models/chat.model");
 
 const getChats = asyncHandler(async (req, res, next) => {
   const { user } = req;
-  const chats = await Chat.find({ users: user }).populate("users").exec();
+  const chats = await Chat.find({ users: user }).populate("users", "-password -refreshToken");
 
   const updatedChats = chats.map((chat) => {
     if (chat.isGroupChat) return chat;
@@ -22,13 +22,19 @@ const getChats = asyncHandler(async (req, res, next) => {
 const addEditChat = asyncHandler(async (req, res, next) => {
   const {
     user,
-    body: { users, chatName, isGroupChat },
+    body: { _id, users, chatName, isGroupChat },
   } = req;
 
   let chat;
 
   if (!isGroupChat) {
     chat = await Chat.findOne({ isGroupChat, users: { $all: [user._id, users[0]] } })
+      .populate("users", "-password -refreshToken")
+      .populate("latestMessage");
+  }
+
+  if (_id) {
+    chat = await Chat.findByIdAndUpdate(_id, { chatName, users: [user._id, ...users], isGroupChat }, { new: true })
       .populate("users", "-password -refreshToken")
       .populate("latestMessage");
   }
@@ -51,7 +57,7 @@ const addEditChat = asyncHandler(async (req, res, next) => {
 const updateChat = asyncHandler(async (req, res, next) => {
   const {
     query: { chatId },
-    body: { chatName, chatType, users },
+    body: { chatName, isGroupChat, users },
   } = req;
 
   const chat = await Chat.findByIdAndUpdate(chatId, { chatName, chatType, users }, { new: true });

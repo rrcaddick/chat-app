@@ -11,6 +11,7 @@ export const initAxiosInterceptors = async (store) => {
       const response = await axios.post(`/api/auth/login`, userData);
       token = response.data.token;
       const user = {
+        _id: response.data._id,
         name: response.data.name,
         email: response.data.email,
         profilePicture: response.data.profilePicture,

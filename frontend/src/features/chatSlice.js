@@ -3,7 +3,7 @@ import chatAdapter from "../Services/Adapters/chatAdapter";
 
 const initialState = {
   chats: [],
-  selectedChat: {},
+  selectedChat: null,
   isLoading: false,
   isSuccess: false,
   isError: false,
@@ -37,6 +37,9 @@ const chatSlice = createSlice({
     setSelectedChat: (state, { payload }) => {
       state.selectedChat = payload;
     },
+    clearSelectedChat: (state) => {
+      state.selectedChat = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -59,10 +62,8 @@ const chatSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = true;
         state.selectedChat = payload?.chat || [];
-        const existingChat = state.chats.find((chat) => chat._id === payload.chat._id);
-        if (!existingChat) {
-          state.chats = [payload.chat, ...state.chats];
-        }
+        state.chats = state.chats.filter((chat) => chat._id !== payload.chat._id);
+        state.chats = [payload.chat, ...state.chats];
       })
       .addCase(addEditChat.rejected, (state, { payload }) => {
         state.isLoading = false;
@@ -71,6 +72,6 @@ const chatSlice = createSlice({
   },
 });
 
-export const { reset, setSelectedChat } = chatSlice.actions;
+export const { reset, setSelectedChat, clearSelectedChat } = chatSlice.actions;
 
 export default chatSlice.reducer;

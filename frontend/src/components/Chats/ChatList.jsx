@@ -1,8 +1,8 @@
 import { Box, Spinner, Stack, Text } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
-import AddGroupChatModal from "../Modals/AddGroupChatModal";
+import AddUpdateGroupChatModal from "../Modals/AddUpdateGroupChatModal";
 
-const ChatList = ({ onSelect, onGroupCreate, onSearch }) => {
+const ChatList = ({ onSelect, onAddEditGroup, onSearch }) => {
   const { chats, selectedChat, isLoading } = useSelector((store) => store.chat);
 
   return (
@@ -12,7 +12,7 @@ const ChatList = ({ onSelect, onGroupCreate, onSearch }) => {
       alignItems="center"
       p={3}
       bg="white"
-      width={{ base: "100%", md: "35%" }}
+      flex={{ base: "1", md: "3.5" }}
       borderRadius="lg"
       borderWidth="1px"
     >
@@ -26,7 +26,7 @@ const ChatList = ({ onSelect, onGroupCreate, onSearch }) => {
         width="100%"
       >
         My Chats
-        <AddGroupChatModal onGroupCreate={onGroupCreate} onSearch={onSearch} />
+        <AddUpdateGroupChatModal onAddEditGroup={onAddEditGroup} onSearch={onSearch} />
       </Box>
 
       <Box
@@ -57,8 +57,8 @@ const ChatList = ({ onSelect, onGroupCreate, onSearch }) => {
                   onSelect(chat);
                 }}
                 cursor="pointer"
-                bg={selectedChat._id === chat._id ? "#38B2AC" : "#E8E8E8"}
-                color={selectedChat._id === chat._id ? "white" : "black"}
+                bg={selectedChat?._id === chat._id ? "#38B2AC" : "#E8E8E8"}
+                color={selectedChat?._id === chat._id ? "white" : "black"}
                 px={3}
                 py={2}
                 borderRadius="lg"

@@ -3,6 +3,7 @@ import {
   Button,
   FormControl,
   FormErrorMessage,
+  IconButton,
   Input,
   Modal,
   ModalBody,
@@ -16,13 +17,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, ViewIcon } from "@chakra-ui/icons";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import UserListItem from "../User/UserListItem";
 import UserBadgeItem from "../User/UserBadgeItem";
-import { reset } from "../../features/userSlice";
+import { reset as resetUsers } from "../../features/userSlice";
 
 const GroupChatForm = styled.form`
   display: flex;
@@ -30,9 +31,10 @@ const GroupChatForm = styled.form`
   gap: 1rem;
 `;
 
-const AddGroupChatModal = ({ onGroupCreate, onSearch }) => {
+const AddGroupChatModal = ({ groupData, onAddEditGroup, onSearch }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { users, isLoading } = useSelector((store) => store.user);
+  const { user } = useSelector((store) => store.auth);
   const [groupChatUsers, setGroupChatUsers] = useState([]);
   const [usersError, setUsersError] = useState(null);
 
@@ -41,8 +43,10 @@ const AddGroupChatModal = ({ onGroupCreate, onSearch }) => {
   const {
     register,
     handleSubmit,
+    setValue,
+    reset,
     formState: { errors },
-  } = useForm({ defaultValues: { groupName: "", users: [] } });
+  } = useForm({ defaultValues: { groupName: "" } });
 
   const debounce = (func) => {
     let timer;
@@ -71,34 +75,56 @@ const AddGroupChatModal = ({ onGroupCreate, onSearch }) => {
     });
   };
 
-  const onCloseHandler = () => {
-    dispatch(reset());
+  const onModalOpenHandler = () => {
+    setUsersError("");
+    if (groupData) {
+      setGroupChatUsers(groupData.users.filter((u) => u._id !== user._id));
+      setValue("groupName", groupData.chatName);
+    }
+    onOpen();
+  };
+
+  const onModalCloseHandler = () => {
     onClose();
+    dispatch(resetUsers());
+    setGroupChatUsers([]);
+    reset();
   };
 
   const onSubmitHandler = ({ groupName }) => {
     if (groupChatUsers.length < 2) return setUsersError("At least 2 users are required to create a group");
 
-    const groupData = { users: groupChatUsers, chatName: groupName, isGroupChat: true };
-    onGroupCreate(groupData);
-    onClose();
+    const updatedGroupData = {
+      _id: groupData?._id || null,
+      users: groupChatUsers,
+      chatName: groupName,
+      isGroupChat: true,
+    };
+    onAddEditGroup(updatedGroupData);
+    onModalCloseHandler();
   };
+
+  const onLeaveGroupHandler = () => {};
 
   return (
     <>
-      <Button
-        onClick={onOpen}
-        display="flex"
-        fontSize={{ base: "10px", md: "10px", lg: "17px" }}
-        rightIcon={<AddIcon />}
-      >
-        Group Chat
-      </Button>
+      {groupData ? (
+        <IconButton icon={<ViewIcon />} onClick={onModalOpenHandler} />
+      ) : (
+        <Button
+          onClick={onModalOpenHandler}
+          display="flex"
+          fontSize={{ base: "10px", md: "10px", lg: "17px" }}
+          rightIcon={<AddIcon />}
+        >
+          Group Chat
+        </Button>
+      )}
 
-      <Modal size="lg" isOpen={isOpen} onClose={onCloseHandler}>
+      <Modal size="lg" isOpen={isOpen} onClose={onModalCloseHandler}>
         <ModalOverlay />
         <ModalContent display="flex" alignItems="center" gap={5} py={2}>
-          <ModalHeader fontSize="35px">Create Group Chat</ModalHeader>
+          <ModalHeader fontSize="35px">{groupData ? groupData.chatName : "Create Group Chat"}</ModalHeader>
           <ModalCloseButton />
           <ModalBody display="flex" flexDir="column" width="100%">
             <GroupChatForm onSubmit={handleSubmit(onSubmitHandler)}>
@@ -115,7 +141,7 @@ const AddGroupChatModal = ({ onGroupCreate, onSearch }) => {
                   <UserBadgeItem
                     key={user._id}
                     {...user}
-                    onSelect={() => {
+                    onRemove={() => {
                       setGroupChatUsers((state) => {
                         const newUserList = state.filter((x) => x._id !== user._id);
                         if (newUserList.length < 2) setUsersError("At least 2 users are required to create a group");
@@ -127,7 +153,7 @@ const AddGroupChatModal = ({ onGroupCreate, onSearch }) => {
               </Box>
               <FormControl isInvalid={Boolean(usersError)}>
                 <Input px={3} placeholder="Search users to add" onChange={searchDebounce} />
-                <FormErrorMessage is>{usersError}</FormErrorMessage>
+                {Boolean(usersError) && <FormErrorMessage>{usersError}</FormErrorMessage>}
               </FormControl>
               {isLoading && <Spinner size="xl" alignSelf="center" mt={2} />}
               {!isLoading && (
@@ -149,11 +175,13 @@ const AddGroupChatModal = ({ onGroupCreate, onSearch }) => {
               )}
 
               <ModalFooter gap={2} px={0}>
-                <Button variant="outline" onClick={onCloseHandler}>
-                  Close
-                </Button>
-                <Button type="submit" disabled={usersError}>
-                  Create Group Chat
+                {groupData && (
+                  <Button onClick={onLeaveGroupHandler} colorScheme="red">
+                    Leave Group
+                  </Button>
+                )}
+                <Button type="submit" disabled={usersError} colorScheme="blue">
+                  {groupData ? "Update" : "Create"} Group Chat
                 </Button>
               </ModalFooter>
             </GroupChatForm>

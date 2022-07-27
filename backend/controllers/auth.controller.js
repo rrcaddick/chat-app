@@ -52,6 +52,7 @@ const loginUser = asyncHandler(async (req, res, next) => {
       .clearCookie("refreshToken", refreshCookieOptions)
       .cookie("refreshToken", refreshToken, refreshCookieOptions)
       .json({
+        _id: user._id,
         name: user.name,
         email: user.email,
         profilePicture: user.profilePicture,

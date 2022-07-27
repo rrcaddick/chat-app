@@ -21,6 +21,7 @@ const MainContent = styled.main`
   display: flex;
   height: 100%;
   padding: 0.5rem;
+  gap: 0.5rem;
 `;
 
 const AppBar = ({ onOpen, children }) => {
@@ -52,7 +53,7 @@ const AppBar = ({ onOpen, children }) => {
             </MenuButton>
             <MenuList>
               <MenuItem>
-                <ProfileModal {...user} />
+                <ProfileModal {...user}>Profile</ProfileModal>
               </MenuItem>
               <MenuDivider />
               <MenuItem

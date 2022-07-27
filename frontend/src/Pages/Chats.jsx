@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { getUserList, reset } from "../features/userSlice";
+import { getUserList, reset as resetUsers } from "../features/userSlice";
 import { addEditChat, getChats, setSelectedChat } from "../features/chatSlice";
 import AppBar from "../components/Layout/AppBar";
 import { useDisclosure } from "@chakra-ui/react";
@@ -23,11 +23,12 @@ const Chats = () => {
     const userIds = chatData.users.map((user) => user._id);
     chatData = { ...chatData, users: userIds };
     dispatch(addEditChat(chatData));
+    dispatch(resetUsers());
     onClose();
   };
 
   const onCloseHandler = () => {
-    dispatch(reset());
+    dispatch(resetUsers());
     onClose();
   };
 
@@ -41,10 +42,15 @@ const Chats = () => {
 
   return (
     <>
-      <SideDrawer isOpen={isOpen} onClose={onCloseHandler} onSearch={searchHandler} onChatSelect={addEditChatHandler} />
+      <SideDrawer
+        isOpen={isOpen}
+        onClose={onCloseHandler}
+        onSearch={searchHandler}
+        onAddEditChat={addEditChatHandler}
+      />
       <AppBar onOpen={onOpen}>
-        <ChatList onSelect={selectChatHandler} onGroupCreate={addEditChatHandler} onSearch={searchHandler} />
-        <ChatMessages />
+        <ChatList onSelect={selectChatHandler} onAddEditGroup={addEditChatHandler} onSearch={searchHandler} />
+        <ChatMessages onSearch={searchHandler} onAddEditGroup={addEditChatHandler} />
       </AppBar>
     </>
   );
