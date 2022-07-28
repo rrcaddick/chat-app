@@ -65,6 +65,8 @@ export const initAxiosInterceptors = async (store) => {
       return Promise.reject(error);
     }
   );
+
+  if (store.getState("user").user) refreshToken();
 };
 
 export default tokenRequest;

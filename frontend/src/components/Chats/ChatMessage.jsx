@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { clearSelectedChat } from "../../features/chatSlice";
 import AddUpdateGroupChatModal from "../Modals/AddUpdateGroupChatModal";
 import ProfileModal from "../Modals/ProfileModal";
+import MessageFeed from "../Messages/MessageFeed";
 
 const MessageForm = styled.form`
   display: flex;
@@ -89,9 +90,7 @@ const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessag
         {isLoading && <Spinner size="xl" borderWidth="5px" w={20} h={20} m="auto" alignSelf="center" />}
         {!isLoading && (
           <Box>
-            {messages.map((message) => (
-              <p key={message._id}>{message.content}</p>
-            ))}
+            <MessageFeed />
           </Box>
         )}
         <MessageForm onSubmit={handleSubmit(sendMessageHandler)} noValidate>
@@ -103,6 +102,7 @@ const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessag
                 py={6}
                 placeholder="Send a message..."
                 {...register("message", { required: true })}
+                tool
               />
               <InputRightElement h="full" w="auto">
                 <Button
