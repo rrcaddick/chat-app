@@ -6,7 +6,9 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider as ReduxProvider } from "react-redux";
 import store from "./App/store";
 import { initAxiosInterceptors } from "./Services/Adapters/tokenInterceptor";
+import { connectSocket } from "./Services/Socket/connectSocket";
 
+connectSocket();
 initAxiosInterceptors(store);
 
 const theme = extendTheme({
@@ -29,13 +31,13 @@ const theme = extendTheme({
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <ReduxProvider store={store}>
-        <ChakraProvider theme={theme}>
-          <App />
-        </ChakraProvider>
-      </ReduxProvider>
-    </BrowserRouter>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <BrowserRouter>
+    <ReduxProvider store={store}>
+      <ChakraProvider theme={theme}>
+        <App />
+      </ChakraProvider>
+    </ReduxProvider>
+  </BrowserRouter>
+  // </React.StrictMode>
 );

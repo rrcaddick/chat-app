@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ArrowBackIcon, EmailIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -13,6 +14,7 @@ import {
 import styled from "@emotion/styled";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm } from "react-hook-form";
+
 import { clearSelectedChat } from "../../features/chatSlice";
 import AddUpdateGroupChatModal from "../Modals/AddUpdateGroupChatModal";
 import ProfileModal from "../Modals/ProfileModal";
@@ -29,12 +31,12 @@ const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessag
   const dispatch = useDispatch();
   const { selectedChat } = useSelector((store) => store.chat);
   const { user } = useSelector((store) => store.auth);
-  const { isLoading, messages } = useSelector((store) => store.message);
+  const { isLoading } = useSelector((store) => store.message);
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid },
+    formState: { isValid },
   } = useForm({ mode: "all" });
 
   const clearSelectedChatHandler = () => {
@@ -102,7 +104,6 @@ const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessag
                 py={6}
                 placeholder="Send a message..."
                 {...register("message", { required: true })}
-                tool
               />
               <InputRightElement h="full" w="auto">
                 <Button

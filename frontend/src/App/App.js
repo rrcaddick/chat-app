@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 import { Routes, Route } from "react-router-dom";
 import RequireAuth from "../components/Authentication/RequireAuth";
 import Home from "../Pages/Home";
@@ -15,6 +17,13 @@ const AppContainer = styled.div`
 `;
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  // Set up socket listeners
+  useEffect(() => {
+    dispatch({ type: "CHAT_SOCKET" });
+  }, [dispatch]);
+
   return (
     <AppContainer>
       <Routes>

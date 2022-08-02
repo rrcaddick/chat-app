@@ -13,10 +13,8 @@ const Chats = () => {
   const dispatch = useDispatch();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { selectedChat } = useSelector((store) => store.chat);
   const { user } = useSelector((store) => store.auth);
-
-  useEffect(() => {}, []);
+  const { selectedChat } = useSelector((store) => store.chat);
 
   const searchHandler = ({ search }) => {
     dispatch(getUserList(search));
@@ -57,7 +55,9 @@ const Chats = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (selectedChat) dispatch(getMessages(selectedChat._id));
+    if (selectedChat) {
+      dispatch(getMessages(selectedChat._id));
+    }
   }, [dispatch, selectedChat]);
 
   return (

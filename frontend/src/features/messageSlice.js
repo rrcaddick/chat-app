@@ -31,6 +31,9 @@ const messageSlice = createSlice({
   initialState,
   reducers: {
     reset: (state) => initialState,
+    addReceivedMessage: (state, { payload }) => {
+      state.messages.push(payload);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -59,6 +62,6 @@ const messageSlice = createSlice({
   },
 });
 
-export const { reset } = messageSlice.actions;
+export const { reset, addReceivedMessage } = messageSlice.actions;
 
 export default messageSlice.reducer;

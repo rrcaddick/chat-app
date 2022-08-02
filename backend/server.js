@@ -27,6 +27,36 @@ app.use(require("./middleware/notFound"));
 // Error handler
 app.use(require("./middleware/errorMiddleware"));
 
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Server started on port: ${port}`.black.bgYellow);
+});
+
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://localhost:3000",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("Connected to socket.io");
+
+  socket.on("connect_user", (user) => {
+    socket.join(user._id);
+    socket.emit("connected");
+    console.log(`${user.name} Connected`);
+  });
+
+  socket.on("joinChat", (room) => {
+    socket.join(room);
+    console.log(`User Joined Room: ${room}`);
+    socket.emit("connected");
+  });
+
+  socket.on("newMessage", (newMessage) => {
+    newMessage.chat.users.forEach((user) => {
+      if (user._id === newMessage.sender._id) return;
+      console.log("dispatching message to " + user.name);
+      socket.to(user._id).emit("messageReceived", newMessage);
+    });
+  });
 });

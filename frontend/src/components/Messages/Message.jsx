@@ -2,7 +2,7 @@ import { Avatar, Box, Text, Tooltip } from "@chakra-ui/react";
 
 const Message = ({ message, senderIsUser, displayAvatar, displaySender }) => {
   return (
-    <Box display="flex" justifyContent={senderIsUser ? "flex-end" : "flex-start"} my={0.5}>
+    <Box display="flex" justifyContent={senderIsUser ? "flex-end" : "flex-start"} my={0.5} alignItems="center">
       <Tooltip label={message.sender.name}>
         <Avatar
           src={message.sender.profilePicture}

@@ -8,20 +8,17 @@ const MessageFeed = () => {
   const { messages } = useSelector((store) => store.message);
 
   const senderIsUser = (message) => {
+    if (!message) return;
     return message.sender._id === user._id;
   };
 
   const displayAvatar = (currMessage, i) => {
-    return (
-      i < messages.length - 1 &&
-      messages[i + 1].sender._id !== currMessage.sender._id &&
-      currMessage.sender._id !== user._id
-    );
+    return messages[i + 1]?.sender._id !== currMessage.sender._id && currMessage.sender._id !== user._id;
   };
 
   const displaySender = (currMessage, i) => {
     if (i === 0 && currMessage.sender._id !== user._id) return true;
-    return messages[i - 1].sender._id !== currMessage.sender._id && currMessage.sender._id !== user._id;
+    return messages[i - 1]?.sender._id !== currMessage.sender._id && currMessage.sender._id !== user._id;
   };
 
   const displayDate = (currMessage, i) => {
