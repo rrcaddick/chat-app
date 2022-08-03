@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { ArrowBackIcon, EmailIcon } from "@chakra-ui/icons";
 import {
   Box,
@@ -13,12 +12,13 @@ import {
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { useSelector, useDispatch } from "react-redux";
-import { useForm } from "react-hook-form";
-
+import { useRef } from "react";
 import { clearSelectedChat } from "../../features/chatSlice";
+import { toggleUserIsTyping } from "../../features/messageSlice";
 import AddUpdateGroupChatModal from "../Modals/AddUpdateGroupChatModal";
 import ProfileModal from "../Modals/ProfileModal";
 import MessageFeed from "../Messages/MessageFeed";
+import { useDebounce } from "../../Hooks/useDebounce";
 
 const MessageForm = styled.form`
   display: flex;
@@ -29,23 +29,32 @@ const MessageForm = styled.form`
 
 const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessage }) => {
   const dispatch = useDispatch();
+  const { debounce, cancelDebounce } = useDebounce();
   const { selectedChat } = useSelector((store) => store.chat);
   const { user } = useSelector((store) => store.auth);
-  const { isLoading } = useSelector((store) => store.message);
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { isValid },
-  } = useForm({ mode: "all" });
+  const { isLoading, userIsTyping } = useSelector((store) => store.message);
+
+  const messageRef = useRef();
 
   const clearSelectedChatHandler = () => {
     dispatch(clearSelectedChat());
   };
 
-  const sendMessageHandler = (messageData) => {
+  const sendMessageHandler = (e) => {
+    e.preventDefault();
+    const messageData = { message: messageRef.current.value };
+    cancelDebounce({ executeDebounceFn: true });
     onSendMessage(messageData);
-    reset();
+    messageRef.current.value = "";
+  };
+
+  console.log("Rendered");
+
+  const typingHandler = () => {
+    if (!userIsTyping) dispatch(toggleUserIsTyping(true));
+    debounce(() => {
+      dispatch(toggleUserIsTyping(true));
+    }, 1500);
   };
 
   if (!selectedChat)
@@ -95,24 +104,26 @@ const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessag
             <MessageFeed />
           </Box>
         )}
-        <MessageForm onSubmit={handleSubmit(sendMessageHandler)} noValidate>
+        <MessageForm onSubmit={sendMessageHandler} noValidate>
           <FormControl>
             <InputGroup border="teal">
               <Input
+                ref={messageRef}
                 bg="white"
                 px={3}
                 py={6}
                 placeholder="Send a message..."
-                {...register("message", { required: true })}
+                onChange={typingHandler}
               />
               <InputRightElement h="full" w="auto">
                 <Button
                   h="full"
+                  type="submit"
                   leftIcon={<EmailIcon />}
                   colorScheme="teal"
                   variant="solid"
                   borderLeftRadius="0"
-                  disabled={!isValid}
+                  disabled={messageRef.current === ""}
                 >
                   Send
                 </Button>

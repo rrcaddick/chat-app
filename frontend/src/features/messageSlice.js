@@ -3,6 +3,9 @@ import messageAdapter from "../Services/Adapters/messageAdapter";
 
 const initialState = {
   messages: [],
+  userIsTyping: false,
+  typingUser: {},
+  chatIsTyping: false,
   isLoading: false,
   isSuccess: false,
   isError: false,
@@ -34,6 +37,15 @@ const messageSlice = createSlice({
     addReceivedMessage: (state, { payload }) => {
       state.messages.push(payload);
     },
+    toggleChatIsTyping: (state) => {
+      state.chatIsTyping = !state.chatIsTyping;
+    },
+    toggleUserIsTyping: (state) => {
+      state.userIsTyping = !state.userIsTyping;
+    },
+    setTypingUser: (state, { payload }) => {
+      state.typingUser = payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -62,6 +74,7 @@ const messageSlice = createSlice({
   },
 });
 
-export const { reset, addReceivedMessage } = messageSlice.actions;
+export const { reset, addReceivedMessage, toggleChatIsTyping, toggleUserIsTyping, setTypingUser } =
+  messageSlice.actions;
 
 export default messageSlice.reducer;

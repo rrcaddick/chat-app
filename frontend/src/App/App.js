@@ -21,7 +21,10 @@ const App = () => {
 
   // Set up socket listeners
   useEffect(() => {
-    dispatch({ type: "CHAT_SOCKET" });
+    dispatch({ type: "CHAT_SOCKET_CONNECT" });
+    return () => {
+      dispatch({ type: "CHAT_SOCKET_DISCONNECT" });
+    };
   }, [dispatch]);
 
   return (

@@ -1,11 +1,18 @@
-import { Box, Text } from "@chakra-ui/react";
+import { Avatar, Box, Text, Tooltip } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
 import ScrollableFeed from "react-scrollable-feed";
 import Message from "./Message";
+import Lottie from "lottie-react";
+import TypingAnimation from "../../assets/Animations/typing-indicator.json";
+import styled from "@emotion/styled";
+
+const TypingIndicator = styled(Lottie)`
+  height: 50%;
+`;
 
 const MessageFeed = () => {
   const { user } = useSelector((store) => store.auth);
-  const { messages } = useSelector((store) => store.message);
+  const { messages, chatIsTyping, typingUser } = useSelector((store) => store.message);
 
   const senderIsUser = (message) => {
     if (!message) return;
@@ -56,6 +63,16 @@ const MessageFeed = () => {
           />
         </Box>
       ))}
+      {chatIsTyping && (
+        <>
+          <Box display="flex" justifyContent="flex-start" my={0.5} alignItems="center">
+            <Tooltip label={typingUser.name}>
+              <Avatar src={typingUser.profilePicture} name={typingUser.name} size="sm" mr={2} />
+            </Tooltip>
+            <TypingIndicator animationData={TypingAnimation} loop={true} />
+          </Box>
+        </>
+      )}
     </ScrollableFeed>
   );
 };

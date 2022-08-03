@@ -1,5 +1,5 @@
 /* eslint-disable no-control-regex */
-import { useState, useEffect } from "react";
+import { useState, useRef } from "react";
 import {
   FormControl,
   Input,
@@ -28,6 +28,7 @@ const LoginForm = styled.form`
 `;
 
 const Login = ({ onLogin, isLoading }) => {
+  const loginRef = useRef();
   const [showPassword, setShowPassword] = useState(false);
   const {
     isError: { login: isError },
@@ -63,6 +64,7 @@ const Login = ({ onLogin, isLoading }) => {
   const setGuestLoginHandler = () => {
     setValue("email", "guest@chatrbox.com");
     setValue("password", "Guest@123");
+    loginRef.current.click();
   };
 
   const submitHandler = (userData) => {
@@ -107,7 +109,7 @@ const Login = ({ onLogin, isLoading }) => {
         </FormControl>
 
         <Box display="flex" flexDir="column" gap={3} mt={5}>
-          <Button type="submit" colorScheme="blue" disabled={isLoading}>
+          <Button type="submit" colorScheme="blue" disabled={isLoading} ref={loginRef}>
             {isLoading ? <Spinner /> : "Login"}
           </Button>
           <Box position="relative" display="flex" justifyContent="center" alignItems="center" my={5}>

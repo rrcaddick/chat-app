@@ -20,10 +20,11 @@ import styled from "@emotion/styled";
 import { AddIcon, ViewIcon } from "@chakra-ui/icons";
 import { useForm } from "react-hook-form";
 import { useSelector, useDispatch } from "react-redux";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import UserListItem from "../User/UserListItem";
 import UserBadgeItem from "../User/UserBadgeItem";
 import { reset as resetUsers } from "../../features/userSlice";
+import { useDebounce } from "../../Hooks/useDebounce";
 
 const GroupChatForm = styled.form`
   display: flex;
@@ -41,6 +42,7 @@ const AddUpdateGroupChatModal = ({ groupData, onAddEditGroup, onSearch, onDelete
   const isAdminUser = user._id === groupData?.groupAdmin;
 
   const dispatch = useDispatch();
+  const { debounce } = useDebounce();
 
   const {
     register,
@@ -50,24 +52,12 @@ const AddUpdateGroupChatModal = ({ groupData, onAddEditGroup, onSearch, onDelete
     formState: { errors },
   } = useForm({ defaultValues: { groupName: "" } });
 
-  const debounce = (func) => {
-    let timer;
-    return function (...args) {
-      const context = this;
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        timer = null;
-        func.apply(context, args);
-      }, 500);
-    };
-  };
-
   const searchHandler = (e) => {
     if (e.target.value.trim() === "") return;
-    onSearch({ search: e.target.value });
+    debounce(() => {
+      onSearch({ search: e.target.value });
+    }, 1000);
   };
-
-  const searchDebounce = useCallback(debounce(searchHandler), [debounce, searchHandler]);
 
   const selectHandler = ({ users }) => {
     setGroupChatUsers((state) => {
@@ -155,7 +145,7 @@ const AddUpdateGroupChatModal = ({ groupData, onAddEditGroup, onSearch, onDelete
               {(isAdminUser || !groupData) && (
                 <>
                   <FormControl isInvalid={Boolean(usersError)}>
-                    <Input px={3} placeholder="Search users to add" onChange={searchDebounce} />
+                    <Input px={3} placeholder="Search users to add" onChange={searchHandler} />
                     {Boolean(usersError) && <FormErrorMessage>{usersError}</FormErrorMessage>}
                   </FormControl>
                   {isLoading && <Spinner size="xl" alignSelf="center" mt={2} />}

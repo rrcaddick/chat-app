@@ -46,9 +46,9 @@ io.on("connection", (socket) => {
     console.log(`${user.name} Connected`);
   });
 
-  socket.on("joinChat", (room) => {
-    socket.join(room);
-    console.log(`User Joined Room: ${room}`);
+  socket.on("joinChat", (chat) => {
+    socket.join(chat);
+    console.log(`User Joined Room: ${chat}`);
     socket.emit("connected");
   });
 
@@ -58,5 +58,12 @@ io.on("connection", (socket) => {
       console.log("dispatching message to " + user.name);
       socket.to(user._id).emit("messageReceived", newMessage);
     });
+  });
+
+  socket.on("typing", ({ chat, user }) => socket.in(chat).emit("typing", user));
+  socket.on("stopTyping", (chat) => socket.in(chat).emit("stopTyping"));
+
+  socket.on("disconnect", (user) => {
+    socket.leave(user._id);
   });
 });
