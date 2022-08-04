@@ -53,10 +53,10 @@ const Signup = ({ onSignup, isLoading, errors: { isError, validationErrors, mess
     formState: { errors },
   } = useForm({
     defaultValues: {
-      name: "Ray Caddick",
-      email: "rrcaddick@gmail.com",
-      password: "Whatever123!",
-      confirmPassword: "Whatever123!",
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
       profilePicture: null,
     },
     mode: "all",

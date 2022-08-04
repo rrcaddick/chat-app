@@ -42,8 +42,8 @@ const Login = ({ onLogin, isLoading }) => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: "rrcaddick@gmail.com",
-      password: "Whatever123!",
+      email: "",
+      password: "",
     },
     mode: "all",
   });
