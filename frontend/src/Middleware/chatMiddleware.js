@@ -1,5 +1,6 @@
 import { connectSocket, socket } from "../Services/Socket/connectSocket";
 import { addReceivedMessage, toggleChatIsTyping, setTypingUser } from "../features/messageSlice";
+import { addNotification } from "../features/notificationSlice";
 
 const chatMiddleware = (store) => {
   return (next) => (action) => {
@@ -7,11 +8,10 @@ const chatMiddleware = (store) => {
     switch (action.type) {
       case "CHAT_SOCKET_CONNECT": {
         socket.on("messageReceived", (newMessage) => {
-          // const { selectedChat } = store.getState().chat;
-          // if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
-          //   // Display notification
-          //   return;
-          // }
+          const { selectedChat } = store.getState().chat;
+          if (!selectedChat || selectedChat._id !== newMessage.chat._id) {
+            return store.dispatch(addNotification(newMessage));
+          }
           store.dispatch(addReceivedMessage(newMessage));
         });
         socket.on("typing", (user) => {

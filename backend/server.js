@@ -21,6 +21,13 @@ app.use("/api/chats", protect, require("./routes/chat.routes"));
 app.use("/api/users", protect, require("./routes/user.routes"));
 app.use("/api/messages", protect, require("./routes/message.routes"));
 
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "..", "frontend", "build")));
+  app.get("*", (req, res, next) => {
+    res.sendFile(path.resolve(__dirname, "..", "frontend", "build", "index.html"));
+  });
+}
+
 // Not found
 app.use(require("./middleware/notFound"));
 
@@ -31,6 +38,7 @@ const server = app.listen(port, () => {
   console.log(`Server started on port: ${port}`.black.bgYellow);
 });
 
+// Webscoket
 const io = require("socket.io")(server, {
   cors: {
     origin: "http://localhost:3000",
