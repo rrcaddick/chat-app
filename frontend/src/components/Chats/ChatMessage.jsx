@@ -4,11 +4,11 @@ import {
   Button,
   FormControl,
   IconButton,
-  Input,
   InputGroup,
-  InputRightElement,
+  InputRightAddon,
   Spinner,
   Text,
+  Textarea,
 } from "@chakra-ui/react";
 import styled from "@emotion/styled";
 import { useSelector, useDispatch } from "react-redux";
@@ -21,10 +21,7 @@ import MessageFeed from "../Messages/MessageFeed";
 import { useDebounce } from "../../Hooks/useDebounce";
 
 const MessageForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  margin-top: 3em;
-  gap: 1rem;
+  flex-shrink: 0;
 `;
 
 const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessage }) => {
@@ -35,6 +32,7 @@ const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessag
   const { isLoading, userIsTyping } = useSelector((store) => store.message);
 
   const messageRef = useRef();
+  const submitRef = useRef();
 
   const clearSelectedChatHandler = () => {
     dispatch(clearSelectedChat());
@@ -47,8 +45,6 @@ const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessag
     onSendMessage(messageData);
     messageRef.current.value = "";
   };
-
-  console.log("Rendered");
 
   const typingHandler = () => {
     if (!userIsTyping) dispatch(toggleUserIsTyping(true));
@@ -86,7 +82,6 @@ const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessag
           <ProfileModal {...selectedChat.users.find((u) => u._id !== user._id)} />
         )}
       </Box>
-
       <Box
         display="flex"
         flexDir="column"
@@ -94,40 +89,56 @@ const ChatMessage = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessag
         p={3}
         bg="#E8E8E8"
         width="100%"
-        height="100%"
         borderRadius="lg"
-        overflowY="hidden"
+        flexGrow="1"
+        overflow="hidden"
+        gap={5}
       >
         {isLoading && <Spinner size="xl" borderWidth="5px" w={20} h={20} m="auto" alignSelf="center" />}
-        {!isLoading && (
-          <Box>
-            <MessageFeed />
-          </Box>
-        )}
+        {!isLoading && <MessageFeed />}
         <MessageForm onSubmit={sendMessageHandler} noValidate>
           <FormControl>
             <InputGroup border="teal">
-              <Input
+              <Textarea
+                rows={1}
                 ref={messageRef}
                 bg="white"
                 px={3}
-                py={6}
                 placeholder="Send a message..."
                 onChange={typingHandler}
+                focusBorderColor="teal"
+                borderRight="none"
+                borderRightRadius="0"
+                resize="none"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    submitRef.current.click();
+                  }
+                }}
+                _hover={{ border: "1px solid teal", borderRight: "none" }}
+                sx={{
+                  "::-webkit-scrollbar": { width: "5px" },
+                  "::-webkit-scrollbar-thumb": {
+                    background: "#00808071",
+                    borderRadius: "xl",
+                  },
+                }}
               />
-              <InputRightElement h="full" w="auto">
+              <InputRightAddon h="full" w="auto" p={0} overflow="hidden">
                 <Button
-                  h="full"
                   type="submit"
+                  ref={submitRef}
                   leftIcon={<EmailIcon />}
                   colorScheme="teal"
                   variant="solid"
-                  borderLeftRadius="0"
-                  disabled={messageRef.current === ""}
+                  borderRadius="0"
+                  ml="2px"
+                  disabled={messageRef?.current?.value === ""}
                 >
                   Send
                 </Button>
-              </InputRightElement>
+              </InputRightAddon>
             </InputGroup>
           </FormControl>
         </MessageForm>

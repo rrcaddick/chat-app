@@ -25,7 +25,7 @@ const chatMiddleware = (store) => {
       }
       case "CHAT_SOCKET_DISCONNECT": {
         const { user } = store.getState().auth;
-        socket.emit("disconnect", user);
+        socket.emit("disconnect_user", user);
         socket.disconnect();
         break;
       }

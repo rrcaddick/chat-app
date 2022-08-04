@@ -63,7 +63,7 @@ io.on("connection", (socket) => {
   socket.on("typing", ({ chat, user }) => socket.in(chat).emit("typing", user));
   socket.on("stopTyping", (chat) => socket.in(chat).emit("stopTyping"));
 
-  socket.on("disconnect", (user) => {
+  socket.on("disconnect_user", (user) => {
     socket.leave(user._id);
   });
 });

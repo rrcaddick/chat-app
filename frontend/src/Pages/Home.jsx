@@ -57,9 +57,7 @@ const Home = () => {
         borderRadius="lg"
         borderWidth="1px"
       >
-        <Text fontSize="4xl" fontFamily="Work sans">
-          Chat-R-Box
-        </Text>
+        <Text fontSize="4xl">Chat-R-Box</Text>
       </Box>
       <Box bg="white" w="100%" p={4} borderRadius="lg" borderWidth="1px">
         <Tabs

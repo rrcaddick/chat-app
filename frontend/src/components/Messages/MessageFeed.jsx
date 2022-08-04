@@ -1,6 +1,6 @@
 import { Avatar, Box, Text, Tooltip } from "@chakra-ui/react";
 import { useSelector } from "react-redux";
-import ScrollableFeed from "react-scrollable-feed";
+import Scrollable from "react-scrollable-feed";
 import Message from "./Message";
 import Lottie from "lottie-react";
 import TypingAnimation from "../../assets/Animations/typing-indicator.json";
@@ -8,6 +8,20 @@ import styled from "@emotion/styled";
 
 const TypingIndicator = styled(Lottie)`
   height: 50%;
+`;
+
+const ScrollableFeed = styled(Scrollable)`
+  padding-right: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #00808071;
+    border-radius: 20px;
+  }
 `;
 
 const MessageFeed = () => {

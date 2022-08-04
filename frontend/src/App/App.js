@@ -8,12 +8,13 @@ import styled from "@emotion/styled";
 import BackgroundImage from "../assets/images/background.png";
 
 const AppContainer = styled.div`
-  height: 100vh;
   display: flex;
   flex-direction: column;
   background-image: url(${BackgroundImage});
   background-position: center;
   background-size: cover;
+  flex-grow: 1;
+  overflow: hidden;
 `;
 
 const App = () => {

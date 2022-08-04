@@ -8,7 +8,6 @@ const ChatMessages = ({ onSearch, onAddEditGroup, onDeleteLeaveChat, onSendMessa
   return (
     <Box
       display={{ base: selectedChat ? "flex" : "none", md: "flex" }}
-      alignItems="center"
       flexDir="column"
       p={3}
       bg="white"

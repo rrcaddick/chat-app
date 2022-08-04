@@ -2,7 +2,7 @@ import { Avatar, Box, Text, Tooltip } from "@chakra-ui/react";
 
 const Message = ({ message, senderIsUser, displayAvatar, displaySender }) => {
   return (
-    <Box display="flex" justifyContent={senderIsUser ? "flex-end" : "flex-start"} my={0.5} alignItems="center">
+    <Box display="flex" justifyContent={senderIsUser ? "flex-end" : "flex-start"} alignItems="center">
       <Tooltip label={message.sender.name}>
         <Avatar
           src={message.sender.profilePicture}
@@ -27,9 +27,9 @@ const Message = ({ message, senderIsUser, displayAvatar, displaySender }) => {
               {message.sender.name}
             </Text>
           )}
-          <Text>{message.content}</Text>
+          <Text whiteSpace="pre-wrap">{message.content}</Text>
         </Box>
-        <Text alignSelf="flex-end" fontSize="10px">
+        <Text alignSelf="flex-end" fontSize="10px" flexShrink="0">
           {new Date(message.createdAt)
             .toLocaleDateString("default", {
               hour: "2-digit",

@@ -18,10 +18,11 @@ import { logoutUser } from "../../features/authSlice";
 import ProfileModal from "../Modals/ProfileModal";
 
 const MainContent = styled.main`
+  flex-grow: 1;
   display: flex;
-  height: 100%;
-  padding: 0.5rem;
   gap: 0.5rem;
+  overflow: hidden;
+  padding: 0.5rem;
 `;
 
 const AppBar = ({ onOpen, children }) => {
@@ -30,7 +31,15 @@ const AppBar = ({ onOpen, children }) => {
 
   return (
     <>
-      <Box display="flex" justifyContent="space-between" alignItems="center" bg="white" p="5px 15px" borderWidth="5px">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        bg="white"
+        p="5px 15px"
+        borderWidth="5px"
+        flexShrink="0"
+      >
         <Tooltip label="Search a user to chat with" hasArrow placement="bottom-end">
           <Button variant="ghost" onClick={onOpen}>
             <SearchIcon />

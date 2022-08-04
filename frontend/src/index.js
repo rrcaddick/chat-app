@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App/App";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter } from "react-router-dom";
 import { Provider as ReduxProvider } from "react-redux";
 import store from "./App/store";
@@ -10,31 +10,14 @@ import { connectSocket } from "./Services/Socket/connectSocket";
 
 connectSocket();
 initAxiosInterceptors(store);
+const rootElement = document.getElementById("root");
 
-const theme = extendTheme({
-  styles: {
-    global: (props) => ({
-      html: {
-        margin: 0,
-        padding: 0,
-        boxSizing: "border-box",
-      },
-      body: {
-        fontFamily: "work sans",
-      },
-      a: {
-        textDecoration: "none",
-      },
-    }),
-  },
-});
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const root = ReactDOM.createRoot(rootElement);
 root.render(
   // <React.StrictMode>
   <BrowserRouter>
     <ReduxProvider store={store}>
-      <ChakraProvider theme={theme}>
+      <ChakraProvider>
         <App />
       </ChakraProvider>
     </ReduxProvider>

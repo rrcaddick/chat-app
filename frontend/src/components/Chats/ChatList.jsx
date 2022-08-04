@@ -14,7 +14,15 @@ const ChatList = ({ onSelect, onAddEditGroup, onSearch }) => {
       bg="white"
       flex={{ base: "1", md: "3.5" }}
       borderRadius="lg"
-      borderWidth="1px"
+      borderWidth="2px"
+      overflow="auto"
+      sx={{
+        "::-webkit-scrollbar": { width: "10px" },
+        "::-webkit-scrollbar-thumb": {
+          background: "#00808071",
+          borderRadius: "20px",
+        },
+      }}
     >
       <Box
         pb={3}
@@ -35,8 +43,8 @@ const ChatList = ({ onSelect, onAddEditGroup, onSearch }) => {
         p={3}
         bg="#f8f8f8"
         width="100%"
-        height="100%"
         borderRadius="lg"
+        flexGrow={1}
         overflowY="hidden"
       >
         {isLoading && <Spinner alignSelf="center" size="lg" />}
