@@ -10,7 +10,7 @@
     "client": "npm start --prefix frontend",
     "client_debug": "npm run debug --prefix frontend",
     "debug": "concurrently \"nodemon --inspect backend/server.js\" \"npm run debug --prefix frontend\"",
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend --legacy-peer-deps && npm run build --prefix frontend"
   },
   "keywords": [],
   "author": "Raymond Caddick",
