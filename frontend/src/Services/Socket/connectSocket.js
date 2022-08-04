@@ -4,7 +4,7 @@ let socket;
 
 const connectSocket = () => {
   if (!socket) {
-    socket = io("http://localhost:5000");
+    socket = io();
   }
 };
 
