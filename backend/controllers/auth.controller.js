@@ -7,21 +7,22 @@ const refreshCookieOptions = require("../config/refreshCookieOptions");
 
 const registerUser = asyncHandler(async (req, res, next) => {
   const {
-    file: { path: tempImagePath },
     body: { name, email, password },
   } = req;
 
-  const targetPath = path.join(
-    __dirname,
-    "..",
-    "assets",
-    "images",
-    "profile-pictures",
-    `${path.basename(tempImagePath)}`
-  );
+  const tempImagePath = req?.file?.path;
 
   if (tempImagePath) {
     try {
+      const targetPath = path.join(
+        __dirname,
+        "..",
+        "assets",
+        "images",
+        "profile-pictures",
+        `${path.basename(tempImagePath)}`
+      );
+
       await fs.rename(tempImagePath, targetPath);
     } catch (error) {
       await fs.unlink(tempImagePath);

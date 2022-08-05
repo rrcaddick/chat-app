@@ -4,7 +4,15 @@ const validateInputs = require("../middleware/validatorMiddleware");
 const { validateRegistation, validateLogin } = require("../validators/authValidators");
 const upload = require("../middleware/uploadMiddleware");
 
-router.post("/register", upload.single("profilePicture"), validateInputs(validateRegistation), registerUser);
+// Heroku free version does not allow file upload, therefore default profile picture will be used
+const canUpload = process.env.DEPLOY_ENV !== "heroku";
+
+router.post(
+  "/register",
+  canUpload ? upload.single("profilePicture") : (_, __, next) => next(),
+  validateInputs(validateRegistation),
+  registerUser
+);
 
 router.post("/login", validateInputs(validateLogin), loginUser);
 
