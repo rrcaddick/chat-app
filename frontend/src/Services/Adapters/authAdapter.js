@@ -1,7 +1,5 @@
 import axios from "axios";
 
-const API_URL = "/api/auth";
-
 const registerUser = async (userData) => {
   const formData = new FormData();
 
@@ -11,11 +9,7 @@ const registerUser = async (userData) => {
   formData.append("confirmPassword", userData.confirmPassword);
   formData.append("profilePicture", userData.profilePicture);
 
-  const response = await axios.post(`${API_URL}/register`, userData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const response = await axios.post(`/api/auth/register`, formData);
   return response.data;
 };
 

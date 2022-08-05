@@ -73,7 +73,7 @@ const Signup = ({ onSignup, isLoading, errors: { isError, validationErrors, mess
       });
     }
 
-    setValue("profilePicture", file, { shouldValidate: true });
+    setValue("profilePicture", file);
     trigger("profilePicture");
   };
 
